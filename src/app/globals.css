@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+/* ───────────── Design tokens ───────────── */
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --color-bg: #06080c;
+  --color-surface: #0c1016;
+  --color-surface-2: #121822;
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-line-strong: rgb(255 255 255 / 0.16);
+  --color-fg: #eef2f7;
+  --color-muted: #a3adbd;
+  --color-subtle: #7c8696;
+  --color-accent: #8bf5c8;
+  --color-accent-strong: #5ee8ad;
+  --color-accent-ink: #03140c;
+  --color-electric: #8b97ff;
+  --color-danger: #ff8a8a;
+
+  --radius-card: 1.25rem;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--color-accent) 35%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  h1, h2, h3 {
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+  }
+  p {
+    text-wrap: pretty;
+  }
+}
+
+/* ───────────── Utilidades del sistema ───────────── */
+@utility text-gradient {
+  background: linear-gradient(100deg, var(--color-fg) 20%, var(--color-accent) 60%, var(--color-electric) 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+}
+
+/* Tarjeta con borde degradado que reacciona al hover (solo CSS, sin JS). */
+@utility card-glow {
+  position: relative;
+  isolation: isolate;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(140deg, rgb(139 245 200 / 0.55), rgb(139 151 255 / 0.25) 40%, transparent 70%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 400ms var(--ease-out-expo);
+    pointer-events: none;
+    z-index: -1;
+  }
+  &:hover::before,
+  &:focus-within::before {
+    opacity: 1;
+  }
+}
+
+/* Revelado al hacer scroll: mejora progresiva, 100% CSS. El contenido siempre está en el DOM. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+}
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(139 245 200 / 0.6); }
+  50% { box-shadow: 0 0 0 6px rgb(139 245 200 / 0); }
+}
+@keyframes flow {
+  to { background-position: 200% 0; }
+}
+.animate-pulse-dot { animation: pulse-dot 2.4s ease-in-out infinite; }
+.animate-flow {
+  background-size: 200% 100%;
+  animation: flow 3s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
