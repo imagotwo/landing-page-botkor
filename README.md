@@ -26,15 +26,15 @@ npm run build && npm start   # build de producción
 | Variable | Uso |
 |---|---|
 | `NEXT_PUBLIC_SITE_URL` | URL canónica |
-| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Número de WhatsApp Business (solo dígitos, con código de país) |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Número de WhatsApp Business (solo dígitos, con código de país). Si falta, se usa el comercial `573219610898` definido en `lib/site.ts` |
 | `NEXT_PUBLIC_GA4_ID` / `NEXT_PUBLIC_META_PIXEL_ID` | Analítica (opcional) |
 | `N8N_WEBHOOK_URL` / `N8N_WEBHOOK_SECRET` | Destino de los leads y secreto HMAC. **Obligatorio en producción:** sin él, la API responde 503 en lugar de perder leads |
 
 ## Antes de publicar (pendientes marcados con `TODO(botkor)`)
 
-- [ ] Confirmar los precios «desde» en `content/landing.ts`
-- [ ] Confirmar el correo comercial y añadir los perfiles sociales en `lib/site.ts`
-- [ ] Verificar que las cifras de los casos de éxito están respaldadas por proyectos reales
+- [x] Precios «desde» en COP en `content/landing.ts`
+- [x] Correo comercial (info@botkor.com), ubicación (Bogotá) y perfiles de Instagram y Facebook en `lib/site.ts`
+- [ ] Revisar que las 4 preguntas frecuentes nuevas (edición, soporte, proceso, cobertura) describen el servicio real
 - [ ] Validar el JSON-LD en https://search.google.com/test/rich-results
 - [ ] Con varias instancias serverless, mover el rate limit a Redis/KV (ver `docs/ARCHITECTURE.md` §4)
 

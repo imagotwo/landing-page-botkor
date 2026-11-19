@@ -1,0 +1,396 @@
+{
+  "name": "botkor · Leads → Google Sheets + correo",
+  "nodes": [
+    {
+      "id": "495586f1-dd96-43c1-bcb6-a45910d9320c",
+      "name": "Webhook lead",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "77f070b4-2900-4bef-9a53-60b1f938ff60",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "botkor-lead",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      }
+    },
+    {
+      "id": "6821d9c5-145c-459a-8719-201ff3cec378",
+      "name": "Verificar firma",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Verifica que el lead viene de tu web (firma HMAC) y prepara los datos para Sheets y el correo.\nconst crypto = require('crypto');\n\n// ▼ Pega aquí EXACTAMENTE el mismo valor de N8N_WEBHOOK_SECRET que pusiste en Vercel / .env.local\nconst SECRET = 'PEGA_AQUI_EL_VALOR_DE_N8N_WEBHOOK_SECRET';\nconst MAX_AGE_S = 300; // se rechazan envíos con más de 5 minutos (evita reenvíos copiados)\n\nconst item = $input.first();\nconst headers = item.json.headers || {};\nconst ts = String(headers['x-botkor-timestamp'] || '');\nconst sig = String(headers['x-botkor-signature'] || '');\n\n// Cuerpo exacto que firmó la web: viene en binario con la opción \"Raw Body\" del Webhook.\nlet raw = null;\ntry {\n  if (item.binary && item.binary.data) raw = (await this.helpers.getBinaryDataBuffer(0, 'data')).toString('utf8');\n} catch (e) {}\nif (raw === null) raw = JSON.stringify(item.json.body);\n\nlet body = item.json.body;\nif (!body || typeof body !== 'object' || !body.lead) {\n  try { body = JSON.parse(raw); } catch (e) { body = null; }\n}\n\nconst expected = 'sha256=' + crypto.createHmac('sha256', SECRET).update(ts + '.' + raw).digest('hex');\nconst validSig = expected.length === sig.length && crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(sig));\nconst age = Math.abs(Date.now() / 1000 - Number(ts));\nconst fresh = ts !== '' && Number.isFinite(age) && age <= MAX_AGE_S;\n\nlet reason = '';\nif (SECRET.startsWith('PEGA_AQUI')) reason = 'Falta configurar SECRET en el nodo \"Verificar firma\"';\nelse if (!validSig) reason = 'Firma inválida';\nelse if (!fresh) reason = 'Timestamp vencido';\nelse if (!body || body.event !== 'lead.created' || !body.lead) reason = 'Payload no reconocido';\n\nif (reason) return [{ json: { valid: false, reason } }];\n\nconst SECTORS = {\n  salud: 'Salud y Bienestar', comercio: 'Comercio y Retail', industria: 'Industria, Logística e Inmobiliaria',\n  'educacion-tech': 'Educación, Tecnología y Startups', servicios: 'Servicios profesionales', otro: 'Otro sector',\n};\nconst WEB_TYPES = { corporativa: 'Corporativa', ecommerce: 'Tienda Online', landing: 'Landing Page', 'a-medida': 'A medida' };\n\nconst l = body.lead;\nconst utm = (body.source && body.source.utm) || {};\nconst fecha = new Date(body.submittedAt || Date.now()).toLocaleString('es-CO', {\n  timeZone: 'America/Bogota', dateStyle: 'short', timeStyle: 'short',\n});\n\nconst row = {\n  'Fecha': fecha,\n  'ID': body.leadId || '',\n  'Nombre': l.fullName || '',\n  'Empresa': l.company || '',\n  'Sector': SECTORS[l.sector] || l.sector || '',\n  'Tipo de web': WEB_TYPES[l.webType] || l.webType || '',\n  'Canal': l.preferredChannel === 'whatsapp' ? 'WhatsApp' : 'Email',\n  'Email': l.email || '',\n  'WhatsApp': l.whatsapp || '',\n  'Página': (body.source && body.source.page) || '',\n  'Referrer': (body.source && body.source.referrer) || '',\n  'utm_source': utm.utm_source || '',\n  'utm_medium': utm.utm_medium || '',\n  'utm_campaign': utm.utm_campaign || '',\n  'gclid': utm.gclid || '',\n  'fbclid': utm.fbclid || '',\n  'Estado': 'Nuevo',\n};\n\n// Datos para el correo (escapados para HTML).\nconst esc = (v) => String(v).replace(/[&<>\"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', \"'\": '&#39;' }[c]));\nconst contactLink = l.whatsapp\n  ? '<a href=\"https://wa.me/' + esc(l.whatsapp.replace(/\\D/g, '')) + '\">Escribirle por WhatsApp (' + esc(l.whatsapp) + ')</a>'\n  : '<a href=\"mailto:' + esc(l.email) + '\">Responder a ' + esc(l.email) + '</a>';\nconst rows = [\n  ['Nombre', row['Nombre']], ['Empresa', row['Empresa']], ['Sector', row['Sector']],\n  ['Tipo de web', row['Tipo de web']], ['Canal preferido', row['Canal']], ['Email', row['Email']],\n  ['WhatsApp', row['WhatsApp']], ['Fecha', row['Fecha']], ['Campaña', row['utm_campaign'] || row['utm_source']],\n].filter((r) => r[1]);\nconst html =\n  '<div style=\"font-family:Arial,sans-serif;font-size:15px;color:#0B1020\">' +\n  '<h2 style=\"margin:0 0 12px;color:#2563EB\">Nueva solicitud de cotización</h2>' +\n  '<table cellpadding=\"6\" style=\"border-collapse:collapse\">' +\n  rows.map((r) => '<tr><td style=\"color:#6b7280\">' + esc(r[0]) + '</td><td><strong>' + esc(r[1]) + '</strong></td></tr>').join('') +\n  '</table><p style=\"margin-top:16px\">' + contactLink + '</p>' +\n  '<p style=\"color:#6b7280;font-size:12px\">ID: ' + esc(row['ID']) + '</p></div>';\n\nreturn [{\n  json: {\n    valid: true,\n    row,\n    email: {\n      subject: 'Nuevo lead: ' + row['Empresa'] + ' — ' + row['Tipo de web'],\n      html,\n    },\n  },\n}];"
+      }
+    },
+    {
+      "id": "dc06b860-0f7e-4515-83f0-059127dad8d9",
+      "name": "¿Firma válida?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cd5add13-6aed-4c8c-b85c-641a70007b84",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "08fa89be-0e03-43db-99b5-edb2bc31d601",
+      "name": "Guardar en Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        680,
+        -100
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Fecha": "={{ $('Verificar firma').first().json.row['Fecha'] }}",
+            "ID": "={{ $('Verificar firma').first().json.row['ID'] }}",
+            "Nombre": "={{ $('Verificar firma').first().json.row['Nombre'] }}",
+            "Empresa": "={{ $('Verificar firma').first().json.row['Empresa'] }}",
+            "Sector": "={{ $('Verificar firma').first().json.row['Sector'] }}",
+            "Tipo de web": "={{ $('Verificar firma').first().json.row['Tipo de web'] }}",
+            "Canal": "={{ $('Verificar firma').first().json.row['Canal'] }}",
+            "Email": "={{ $('Verificar firma').first().json.row['Email'] }}",
+            "WhatsApp": "={{ $('Verificar firma').first().json.row['WhatsApp'] }}",
+            "Página": "={{ $('Verificar firma').first().json.row['Página'] }}",
+            "Referrer": "={{ $('Verificar firma').first().json.row['Referrer'] }}",
+            "utm_source": "={{ $('Verificar firma').first().json.row['utm_source'] }}",
+            "utm_medium": "={{ $('Verificar firma').first().json.row['utm_medium'] }}",
+            "utm_campaign": "={{ $('Verificar firma').first().json.row['utm_campaign'] }}",
+            "gclid": "={{ $('Verificar firma').first().json.row['gclid'] }}",
+            "fbclid": "={{ $('Verificar firma').first().json.row['fbclid'] }}",
+            "Estado": "={{ $('Verificar firma').first().json.row['Estado'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Empresa",
+              "displayName": "Empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sector",
+              "displayName": "Sector",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipo de web",
+              "displayName": "Tipo de web",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Canal",
+              "displayName": "Canal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WhatsApp",
+              "displayName": "WhatsApp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Página",
+              "displayName": "Página",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Referrer",
+              "displayName": "Referrer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "utm_source",
+              "displayName": "utm_source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "utm_medium",
+              "displayName": "utm_medium",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "utm_campaign",
+              "displayName": "utm_campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "gclid",
+              "displayName": "gclid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fbclid",
+              "displayName": "fbclid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      }
+    },
+    {
+      "id": "e01f01e2-40e1-45b2-89f6-afaf3fdbef3e",
+      "name": "Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        900,
+        -100
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": true } }}",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    },
+    {
+      "id": "9d4e5907-9a64-4cc7-9f10-5b9cfde0c40a",
+      "name": "Avisar por correo",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1120,
+        -100
+      ],
+      "parameters": {
+        "sendTo": "TU_CORREO@ejemplo.com",
+        "subject": "={{ $('Verificar firma').first().json.email.subject }}",
+        "emailType": "html",
+        "message": "={{ $('Verificar firma').first().json.email.html }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Leads botkor"
+        }
+      }
+    },
+    {
+      "id": "dba700c7-51b2-4233-97a5-ca49d184a93e",
+      "name": "Rechazar (401)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        680,
+        120
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": false, \"error\": $json.reason } }}",
+        "options": {
+          "responseCode": 401
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook lead": {
+      "main": [
+        [
+          {
+            "node": "Verificar firma",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar firma": {
+      "main": [
+        [
+          {
+            "node": "¿Firma válida?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Firma válida?": {
+      "main": [
+        [
+          {
+            "node": "Guardar en Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rechazar (401)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar en Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder OK": {
+      "main": [
+        [
+          {
+            "node": "Avisar por correo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

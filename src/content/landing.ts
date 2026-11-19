@@ -8,11 +8,10 @@
  */
 
 // Precios de referencia "desde". El código de moneda (3 letras al inicio) define priceCurrency en el JSON-LD.
-// TODO(botkor): confirmar en COP los precios corporativo y e-commerce.
 export const pricing = {
   landing: "COP $970.000",
-  corporate: "USD 900",
-  ecommerce: "USD 1.800",
+  corporate: "COP $1.500.000",
+  ecommerce: "COP $3.500.000",
 } as const;
 
 /**
@@ -23,24 +22,9 @@ export const pricing = {
  */
 export const pageDates = {
   published: "2026-11-18",
-  modified: "2026-11-18",
+  modified: "2026-11-19",
 } as const;
 
-export interface CaseItem {
-  title: string;
-  challenge: string;
-  solution: string;
-  metrics: readonly { value: string; label: string }[];
-  /** Enlace al proyecto publicado (señal verificable para buscadores e IA). */
-  url?: string;
-  /** Destacado a ancho completo. */
-  featured?: boolean;
-  /**
-   * true = datos de ejemplo pendientes de confirmar. Se muestran solo en desarrollo, con una
-   * etiqueta "Datos de ejemplo", y NO se publican en producción. Pásalo a false al poner los reales.
-   */
-  sample?: boolean;
-}
 
 export type IconName =
   | "building"
@@ -82,7 +66,7 @@ export const hero = {
   // Se renderiza con "botkor" en negrita (ver Hero.tsx). Texto plano para metadatos y JSON-LD.
   lead: "botkor es una agencia de diseño y desarrollo web en Bogotá que crea páginas web corporativas, tiendas online y landing pages para empresas de toda Colombia. Entregamos en 1 a 3 semanas, desde COP $970.000, con carga en menos de 2 segundos, SEO técnico, optimización para buscadores con IA y automatizaciones que llevan cada contacto a WhatsApp o a tu CRM.",
   primaryCta: "Cotizar mi página web ahora",
-  secondaryCta: "Ver portafolio de proyectos",
+  secondaryCta: "Ver un proyecto en acción",
   proof: [
     { value: "1–3", label: "semanas de entrega" },
     { value: "<2 s", label: "tiempo de carga objetivo" },
@@ -220,6 +204,9 @@ export const innovation = {
   h2: "Desarrollo web impulsado por las últimas tecnologías",
   intro:
     "Desarrollamos con el mismo stack que usan las plataformas digitales líderes: Next.js, React, TypeScript, Node.js y despliegue en una red edge global. Para tu negocio eso se traduce en páginas que cargan en menos de 2 segundos, cero obsolescencia tecnológica durante años y contenido estructurado para que Google y los asistentes de IA lo entiendan.",
+  showcaseCaption:
+    "En la animación: el sitio que botkor desarrolló para Enfermeras Ángeles de Vida, servicio de enfermería a domicilio en Bogotá, visto en computador y en celular. La misma web se adapta a cada pantalla, carga rápido y lleva cada consulta directo a WhatsApp.",
+  showcaseUrl: "https://www.enfermerasangelesdevida.com/",
   items: [
     { icon: "zap", tag: "Next.js + React", title: "Velocidad que convierte", description: "Renderizado en servidor y generación estática: el contenido llega listo al navegador y cada segundo ganado reduce el abandono." },
     { icon: "code", tag: "TypeScript", title: "Menos errores en producción", description: "Código tipado y verificado antes de publicarse. Menos fallas inesperadas y cambios más rápidos y seguros." },
@@ -323,50 +310,6 @@ export const processSection = {
   ],
 } as const;
 
-export const cases = {
-  id: "casos",
-  eyebrow: "Casos de éxito",
-  h2: "Lo que nuestros clientes logran con una web desarrollada por botkor",
-  intro:
-    "Medimos nuestros proyectos por resultados de negocio, no solo por diseño. Estos casos muestran lo que ocurre cuando estrategia comercial, velocidad de carga y automatización trabajan juntas desde el código: más solicitudes calificadas, procesos de venta sin intervención manual y plataformas estables bajo alta demanda.",
-  items: [
-    {
-      // TODO(botkor): reemplazar las métricas por las reales y cambiar sample a false para publicarlo.
-      title: "Caso de Éxito: Enfermeras Ángeles de Vida, enfermería a domicilio en Bogotá",
-      url: "https://www.enfermerasangelesdevida.com/",
-      featured: true,
-      sample: true,
-      challenge:
-        "Las familias que buscan enfermería a domicilio deciden rápido y casi siempre desde el celular: necesitan confianza inmediata, información clara de los servicios y un canal directo para pedir ayuda.",
-      solution:
-        "Sitio a medida con narrativa centrada en la familia, catálogo de seis servicios, proceso de atención explicado paso a paso, preguntas frecuentes y botón de WhatsApp en toda la página, optimizado para búsquedas locales en Bogotá.",
-      metrics: [
-        { value: "1,3 s", label: "tiempo de carga en móvil (LCP)" },
-        { value: "+65 %", label: "solicitudes de servicio por WhatsApp en 3 meses" },
-        { value: "Top 3", label: "en Google para “enfermeras a domicilio Bogotá”" },
-      ],
-    },
-    {
-      title: "Caso de Éxito: Consultora de Negocios B2B",
-      challenge: "Su web anterior generaba pocas solicitudes y los contactos se perdían entre correos sin seguimiento.",
-      solution: "Rediseño corporativo orientado a conversión, formularios de cotización por servicio e integración directa con su CRM mediante n8n, con asignación automática al consultor responsable.",
-      metrics: [
-        { value: "+140%", label: "solicitudes de cotización online" },
-        { value: "CRM", label: "integración automática de leads" },
-      ],
-    },
-    {
-      title: "Caso de Éxito: E-commerce de Productos Especializados",
-      challenge: "Una tienda lenta, con caídas en temporadas de alta demanda y gestión manual de pedidos.",
-      solution: "Nueva tienda headless con catálogo optimizado, pagos integrados y notificaciones automáticas de pedido por correo y WhatsApp, desplegada en infraestructura edge.",
-      metrics: [
-        { value: "<2 s", label: "tiempo de carga" },
-        { value: "24/7", label: "ventas automáticas sin caídas" },
-      ],
-    },
-  ] as CaseItem[],
-};
-
 export const faq = {
   id: "preguntas-frecuentes",
   eyebrow: "FAQ",
@@ -390,6 +333,26 @@ export const faq = {
       question: "¿Mi página web aparecerá en Google y en buscadores con Inteligencia Artificial?",
       answer:
         "Sí. Cada sitio incluye SEO técnico y GEO desde el código: HTML semántico, datos estructurados JSON-LD, sitemap, alta velocidad y acceso habilitado para Googlebot, GPTBot, PerplexityBot y ClaudeBot. Así tu web puede ser indexada por Google y citada por ChatGPT, Gemini o Perplexity; las posiciones finales también dependen de la competencia y del contenido.",
+    },
+    {
+      question: "¿Podré editar los textos y las imágenes de mi página web yo mismo?",
+      answer:
+        "Sí. Entregamos tu sitio con un panel autogestionable donde editas textos, imágenes, productos y artículos del blog sin tocar código. Al lanzar el sitio capacitamos a tu equipo para usarlo, y si prefieres no hacerlo tú, nuestros planes de administración se encargan de los cambios.",
+    },
+    {
+      question: "¿Ofrecen mantenimiento y soporte después de entregar la página web?",
+      answer:
+        "Sí. Después del lanzamiento ofrecemos planes de administración con monitoreo de disponibilidad, copias de seguridad automáticas, actualizaciones, parches de seguridad y soporte técnico con tiempos de respuesta definidos. Así tu web se mantiene rápida, segura y al día sin costos sorpresa.",
+    },
+    {
+      question: "¿Cómo es el proceso para crear mi página web con botkor?",
+      answer:
+        "Trabajamos en cuatro etapas: diagnóstico y estrategia comercial (días 1 a 3), diseño visual y prototipo UX/UI (días 3 a 7), programación con optimización SEO y GEO (semana 2), y pruebas, lanzamiento y capacitación (semanas 2 a 3). Tienes un responsable dedicado y ves los avances en cada etapa.",
+    },
+    {
+      question: "¿Trabajan solo con empresas de Bogotá?",
+      answer:
+        "No. botkor tiene su base en Bogotá, pero desarrolla páginas web para empresas de toda Colombia. Todo el proceso funciona en línea: reuniones por videollamada, revisiones sobre el prototipo navegable y atención por WhatsApp o correo, con los mismos tiempos de entrega en cualquier ciudad.",
     },
   ],
 } as const;

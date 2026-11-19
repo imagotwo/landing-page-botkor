@@ -24,6 +24,12 @@ export function buildJsonLd() {
         logo: { "@type": "ImageObject", url: `${siteConfig.url}/icon.svg` },
         email: siteConfig.email,
         ...(siteConfig.sameAs.length ? { sameAs: siteConfig.sameAs } : {}),
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: siteConfig.address.locality,
+          addressRegion: siteConfig.address.region,
+          addressCountry: siteConfig.address.country,
+        },
         contactPoint: {
           "@type": "ContactPoint",
           contactType: "sales",

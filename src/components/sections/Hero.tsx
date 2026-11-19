@@ -39,7 +39,7 @@ export function Hero() {
             <TrackedLink href="#cotizar" event="cta_click" eventParams={{ location: "hero_primary" }} variant="brand">
               {hero.primaryCta}
             </TrackedLink>
-            <TrackedLink href="#casos" event="cta_click" eventParams={{ location: "hero_portfolio" }} unstyled className="link-underline text-base text-fg">
+            <TrackedLink href="#tecnologia" event="cta_click" eventParams={{ location: "hero_portfolio" }} unstyled className="link-underline text-base text-fg">
               {hero.secondaryCta}
             </TrackedLink>
           </div>

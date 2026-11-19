@@ -281,13 +281,13 @@
 }
 
 /* ── Scroll continuo de 10 s ─────────────────────────────────────────
-   Laptop (más lento, ≈ 515 px/s): del inicio hasta "Funciones" (5 153 / 11 645 px = 44,25 %), 0,3 – 10,3 s.
+   Laptop (más lento, ≈ 515 px/s): del inicio hasta "Funciones" (5 153 / 6 300 px de la captura recortada = 81,79 %), 0,3 – 10,3 s.
    Celular central (≈ 785 px/s): del inicio hasta "Funciones" (7 852 / 10 000 px = 78,52 %), 12,5 – 22,5 s.
    Arranque y frenado suaves, velocidad constante en el tramo central.
    El regreso al inicio ocurre mientras la escena está oculta. */
 @keyframes sc-scroll-laptop {
   0%, 1.23% { transform: translateY(0); animation-timing-function: cubic-bezier(0.3, 0, 0.7, 1); }
-  42.21%, 69.9% { transform: translateY(-44.25%); }
+  42.21%, 69.9% { transform: translateY(-81.79%); }
   70%, 100% { transform: translateY(0); }
 }
 @keyframes sc-scroll-ph-center {

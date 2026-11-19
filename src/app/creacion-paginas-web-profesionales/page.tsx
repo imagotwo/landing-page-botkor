@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { WhatsAppFloat } from "@/components/analytics/WhatsAppFloat";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
-import { Cases } from "@/components/sections/Cases";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { Faq } from "@/components/sections/Faq";
 import { Automation, Management, Solutions, TechPillars, WhyBotkor } from "@/components/sections/FeatureSections";
@@ -14,15 +13,17 @@ import { JsonLdSchema } from "@/components/seo/JsonLdSchema";
 import { pageDates } from "@/content/landing";
 import { landingUrl, siteConfig } from "@/lib/site";
 
-const title = "Creación de Páginas Web Profesionales a Medida";
+const title = "Diseño de Páginas Web Profesionales en Bogotá";
 const description =
-  "Diseño y desarrollo de páginas web profesionales, tiendas online y landing pages que cargan en menos de 2 s, con SEO + GEO y automatizaciones. Entrega en 1 a 3 semanas.";
+  "Páginas web profesionales en Bogotá desde COP $970.000: corporativas, tiendas online y landing pages rápidas, con SEO y entrega en 1 a 3 semanas.";
 
 export const metadata: Metadata = {
   title,
   description,
   alternates: { canonical: siteConfig.landingPath },
   keywords: [
+    "diseño de páginas web en Bogotá",
+    "páginas web profesionales Bogotá",
     "creación de páginas web profesionales",
     "diseño de páginas web para empresas",
     "desarrollo web a medida",
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     type: "website",
-    locale: "es_LA",
+    locale: "es_CO",
     url: landingUrl,
     siteName: siteConfig.name,
     title: `${title} | ${siteConfig.name}`,
@@ -69,7 +70,6 @@ export default function LandingPage() {
         <WhyBotkor />
         <Sectors />
         <Process />
-        <Cases />
         <Faq />
         <ContactSection />
       </main>

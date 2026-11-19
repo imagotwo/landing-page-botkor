@@ -9,11 +9,40 @@
  * Solo HTML + CSS (showcase.css), sin JavaScript. Decorativo: aria-hidden + data-nosnippet.
  * Arranca al entrar en viewport (.is-inview); con reduced-motion queda fija la laptop.
  */
-const DESKTOP = { src: "/showcase/angeles-desktop.webp", w: 1100, h: 8895 };
-const MOBILE = { src: "/showcase/angeles-mobile.webp", w: 480, h: 12308 };
+/*
+ * Cada captura tiene dos tamaños; el navegador elige según el ancho real de la pantalla del dispositivo
+ * (laptop ≈ 61 % del escenario, celular central ≈ 24 %; escenario = min(100vw − 32px, 1024px)).
+ * La captura de escritorio está recortada a 6 300 px de alto: el scroll de la laptop no pasa de ahí.
+ */
+const DESKTOP = {
+  src: "/showcase/angeles-desktop.webp",
+  srcSet: "/showcase/angeles-desktop-640.webp 640w, /showcase/angeles-desktop.webp 1100w",
+  sizes: "(min-width: 1056px) 623px, 61vw",
+  w: 1100,
+  h: 4813,
+};
+const MOBILE = {
+  src: "/showcase/angeles-mobile.webp",
+  srcSet: "/showcase/angeles-mobile-280.webp 280w, /showcase/angeles-mobile.webp 480w",
+  sizes: "(min-width: 1056px) 246px, 24vw",
+  w: 480,
+  h: 12308,
+};
 
 function Shot({ img }: { img: typeof DESKTOP }) {
-  return <img src={img.src} width={img.w} height={img.h} alt="" loading="lazy" decoding="async" draggable={false} />;
+  return (
+    <img
+      src={img.src}
+      srcSet={img.srcSet}
+      sizes={img.sizes}
+      width={img.w}
+      height={img.h}
+      alt=""
+      loading="lazy"
+      decoding="async"
+      draggable={false}
+    />
+  );
 }
 
 function Phone({ pos, scroll }: { pos: "left" | "center" | "right"; scroll: string }) {

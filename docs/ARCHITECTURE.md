@@ -119,6 +119,8 @@ if (expected !== $json.headers['x-botkor-signature'] || Date.now()/1000 - Number
 ```
 *(Activa "Raw Body" en el nodo Webhook para firmar exactamente los mismos bytes.)*
 
+**Flujo listo para importar (Google Sheets + correo):** [`docs/n8n/`](n8n/README.md), con la guía paso a paso. Para probarlo sin el formulario: `node --env-file=.env.local scripts/test-n8n-webhook.mjs`.
+
 ## 6. Eventos analíticos
 
 | Evento (GA4) | Meta | Dónde se dispara |

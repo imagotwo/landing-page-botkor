@@ -211,3 +211,66 @@
   font-size: var(--text-small);
   color: var(--surface-danger);
 }
+
+/* ── Botón flotante de WhatsApp: círculo verde, flotación continua y suave, y halo de luz ── */
+.wa-float {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  width: 3.75rem;
+  height: 3.75rem;
+  border-radius: 9999px;
+  background: #25d366;
+  color: #fff;
+  box-shadow: 0 10px 28px -8px rgb(0 0 0 / 0.45), 0 0 22px rgb(37 211 102 / 0.25);
+  animation: wa-bounce 2.6s ease-in-out infinite, wa-glow 2.6s ease-in-out infinite;
+  transition: background-color .25s ease, transform .25s ease;
+}
+.wa-float::before {
+  /* halo de luz difuminado: degradado radial + desenfoque, sin borde visible */
+  content: "";
+  position: absolute;
+  inset: -55%;
+  border-radius: inherit;
+  background: radial-gradient(circle, rgb(37 211 102 / 0.55) 0%, rgb(37 211 102 / 0.22) 38%, rgb(37 211 102 / 0) 70%);
+  filter: blur(10px);
+  z-index: -1;
+  pointer-events: none;
+  animation: wa-ring 2.6s ease-in-out infinite;
+}
+.wa-float:hover { background: #1ebe5b; animation-play-state: paused, running; transform: scale(1.06); }
+.wa-float:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+@media (min-width: 640px) {
+  .wa-float { right: 1.5rem; bottom: 1.5rem; width: 4rem; height: 4rem; }
+}
+@keyframes wa-bounce {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -7px; }
+}
+@keyframes wa-glow {
+  0%, 100% { box-shadow: 0 10px 28px -8px rgb(0 0 0 / 0.45), 0 0 22px rgb(37 211 102 / 0.25); }
+  50% { box-shadow: 0 10px 28px -8px rgb(0 0 0 / 0.45), 0 0 40px rgb(37 211 102 / 0.4); }
+}
+@keyframes wa-ring {
+  0%, 100% { opacity: .55; transform: scale(.9); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wa-float, .wa-float::before { animation: none; }
+  .wa-float { box-shadow: 0 10px 28px -8px rgb(0 0 0 / 0.45), 0 0 32px rgb(37 211 102 / 0.35); }
+}
+
+/* ── Rendimiento: las secciones bajo el primer pantallazo no se maquetan hasta acercarse al viewport.
+   Medido en móvil (CPU 4x): el primer layout baja de ~350 ms a ~145 ms y el primer pintado llega ~300 ms antes.
+   `auto` recuerda el alto real una vez pintada; 900px es solo la estimación inicial.
+   Solo con puntero táctil (celulares/tablets): ahí está el problema de CPU y no se usa Lenis. En escritorio
+   Lenis calcula el destino de los enlaces #ancla al hacer clic y, con alturas estimadas, se quedaba corto. */
+@media (pointer: coarse) {
+  main > section:not(:first-child) {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
+  }
+}

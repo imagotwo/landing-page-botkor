@@ -1,11 +1,25 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import { hero } from "@/content/landing";
+import { hero, pricing } from "@/content/landing";
 
-export const alt = "botkor — Creación de páginas web profesionales a medida";
+/** SVG de /public como data URI. Se quita el <text> ("Growth Systems"): el renderizador no carga Poppins. */
+async function svgDataUri(file: string, viewBox?: string) {
+  let svg = await readFile(join(process.cwd(), "public", file), "utf8");
+  svg = svg.replace(/<text[\s\S]*?<\/text>/g, "");
+  if (viewBox) svg = svg.replace(/viewBox="[^"]*"/, `viewBox="${viewBox}"`).replace(/ width="[^"]*" height="[^"]*"/, "");
+  return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
+}
+
+export const alt = "botkor — Diseño de páginas web profesionales en Bogotá";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function OpengraphImage() {
+export default async function OpengraphImage() {
+  const [mark, wordmark] = await Promise.all([
+    svgDataUri("icon.svg"),
+    svgDataUri("brand/botkor-wordmark-blanco.svg", "77 12 151 23"),
+  ]);
   return new ImageResponse(
     (
       <div
@@ -21,19 +35,24 @@ export default function OpengraphImage() {
           color: "#fafafa",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ display: "flex", width: 56, height: 56, borderRadius: 14, background: "#2563eb", color: "#ffffff", fontSize: 26, fontWeight: 700, alignItems: "center", justifyContent: "center" }}>
-            b/
-          </div>
-          <div style={{ fontSize: 34, fontWeight: 600 }}>botkor</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse solo acepta <img> */}
+          <img src={mark} width={84} height={84} alt="" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={wordmark} width={302} height={46} alt="" />
         </div>
-        <div style={{ fontSize: 64, fontWeight: 700, lineHeight: 1.08, letterSpacing: -1.5, maxWidth: 1000 }}>{hero.h1}</div>
+        {/* Sin letterSpacing negativo: next/og reserva el ancho sin aplicarlo y deja huecos tras las palabras largas */}
+        <div style={{ display: "flex", flexWrap: "wrap", columnGap: 18, fontSize: 64, fontWeight: 700, lineHeight: 1.08, maxWidth: 1000 }}>
+          {hero.h1.split(" ").map((word, i) => (
+            <span key={i}>{word}</span>
+          ))}
+        </div>
         <div style={{ display: "flex", gap: 28, fontSize: 26, color: "#06b6d4" }}>
           <span>Carga &lt; 2 s</span>
           <span>·</span>
           <span>SEO + GEO</span>
           <span>·</span>
-          <span>Entrega en 1–3 semanas</span>
+          <span>Desde {pricing.landing}</span>
         </div>
       </div>
     ),

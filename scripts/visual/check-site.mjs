@@ -69,7 +69,7 @@ for (const vp of [
 
   // Secciones individuales (solo desktop y móvil)
   if (vp.name === "desktop-1440" || vp.name === "mobile-390") {
-    for (const id of ["soluciones", "automatizacion", "seguridad", "soporte", "tecnologia", "por-que-botkor", "sectores", "proceso", "casos", "preguntas-frecuentes", "cotizar"]) {
+    for (const id of ["soluciones", "automatizacion", "seguridad", "soporte", "tecnologia", "por-que-botkor", "sectores", "proceso", "preguntas-frecuentes", "cotizar"]) {
       const el = await page.$(`#${id}`);
       if (!el) continue;
       await el.scrollIntoViewIfNeeded();

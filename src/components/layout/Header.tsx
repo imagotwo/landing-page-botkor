@@ -10,7 +10,7 @@ import { siteConfig, whatsappHref } from "@/lib/site";
 const BAR_LINKS = [
   { href: "#soluciones", label: "Soluciones" },
   { href: "#proceso", label: "Proceso" },
-  { href: "#casos", label: "Casos" },
+  { href: "#tecnologia", label: "Proyectos" },
 ];
 
 const MENU_LINKS = [
@@ -19,7 +19,6 @@ const MENU_LINKS = [
   { href: "#seguridad", label: "Ingeniería y seguridad" },
   { href: "#tecnologia", label: "Tecnología" },
   { href: "#proceso", label: "Proceso" },
-  { href: "#casos", label: "Casos de éxito" },
   { href: "#preguntas-frecuentes", label: "Preguntas frecuentes" },
 ];
 
