@@ -50,9 +50,9 @@ export interface FeatureItem {
 
 export const hero = {
   eyebrow: "Agencia de desarrollo web · SEO + GEO + Automatización",
-  h1: "Creación de páginas web profesionales a medida para impulsar tu negocio",
+  h1: "Desarrollo web y automatización",
   // Se renderiza con "botkor" en negrita (ver Hero.tsx). Texto plano para metadatos y JSON-LD.
-  lead: "En botkor diseñamos y desarrollamos sitios web rápidos, modernos y orientados a generar ventas para empresas de cualquier sector. Entregamos plataformas 100% adaptables a dispositivos móviles, preparadas desde el código para posicionar en Google, integrarse con automatizaciones y ser recomendadas por motores de Inteligencia Artificial, en plazos de 1 a 3 semanas.",
+  lead: "Nuestro servicio de desarrollo web combina diseño adaptable, posicionamiento en Google, recomendación por IA y una estructura lista para cualquier automatización.",
   primaryCta: "Cotizar mi página web ahora",
   secondaryCta: "Ver portafolio de proyectos",
   proof: [
@@ -66,7 +66,7 @@ export const hero = {
 export const solutions = {
   id: "soluciones",
   eyebrow: "Soluciones",
-  h2: "Agencia de diseño y desarrollo web para empresas y emprendedores",
+  h2: "Desarrollo web para empresas y emprendedores",
   intro:
     "botkor es una agencia de diseño y desarrollo web que crea sitios corporativos, tiendas online y landing pages para empresas y emprendedores de cualquier sector. Cada proyecto parte de un objetivo comercial medible —más cotizaciones, más ventas o más reservas— y se entrega con código propio, optimizado y listo para crecer.",
   items: [

@@ -16,18 +16,19 @@ export default function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: 72,
-          background: "radial-gradient(circle at 20% 0%, #12352a 0%, #06080c 55%)",
-          color: "#eef2f7",
+          // Paleta BOTKOR: Azul Corporativo con degradado Azul Tecnológico → Morado Inteligente
+          background: "linear-gradient(135deg, #0b1020 0%, #0b1020 45%, #2563eb 80%, #7c3aed 100%)",
+          color: "#fafafa",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ display: "flex", width: 56, height: 56, borderRadius: 14, background: "#8bf5c8", color: "#03140c", fontSize: 26, fontWeight: 700, alignItems: "center", justifyContent: "center" }}>
+          <div style={{ display: "flex", width: 56, height: 56, borderRadius: 14, background: "#2563eb", color: "#ffffff", fontSize: 26, fontWeight: 700, alignItems: "center", justifyContent: "center" }}>
             b/
           </div>
           <div style={{ fontSize: 34, fontWeight: 600 }}>botkor</div>
         </div>
         <div style={{ fontSize: 64, fontWeight: 700, lineHeight: 1.08, letterSpacing: -1.5, maxWidth: 1000 }}>{hero.h1}</div>
-        <div style={{ display: "flex", gap: 28, fontSize: 26, color: "#8bf5c8" }}>
+        <div style={{ display: "flex", gap: 28, fontSize: 26, color: "#06b6d4" }}>
           <span>Carga &lt; 2 s</span>
           <span>·</span>
           <span>SEO + GEO</span>

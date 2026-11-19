@@ -1,46 +1,49 @@
 import { TrackedLink } from "@/components/analytics/TrackedLink";
 import { WhatsAppIcon } from "@/components/analytics/WhatsAppIcon";
-import { Container } from "@/components/ui/Container";
-import { ArrowRight } from "@/components/ui/Icon";
-import { hero } from "@/content/landing";
+import { ParticleField } from "@/components/motion/ParticleField";
+import { SplitWords } from "@/components/motion/SplitWords";
+import { hero, whyBotkor } from "@/content/landing";
 import { whatsappHref } from "@/lib/site";
 import { HeroVisual } from "./HeroVisual";
 
+/**
+ * Hero (patrón "home-head" de la referencia):
+ *  - Fondo azul noche con halos (.hero-backdrop) y, encima, la nube de partículas.
+ *  - H1 gigante revelado por palabras (solo CSS: no depende de JS ni retrasa el LCP).
+ *  - Lema inferior derecho con filete vertical.
+ *  - Panel oscuro superpuesto que "cabalga" el borde inferior del hero.
+ */
 export function Hero() {
-  // Resalta la marca dentro del párrafo Answer-First sin duplicar el texto.
   const [before, after] = hero.lead.split(/botkor(.*)/s);
+  const [tagA, tagB] = hero.eyebrow.split(" · ");
+  const statement = whyBotkor.intro.split(". ").at(-1) ?? "";
 
   return (
-    <section aria-labelledby="hero-titulo" className="relative overflow-hidden">
-      <div aria-hidden="true" className="bg-grid pointer-events-none absolute inset-0" />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(139_245_200/0.16),transparent)] blur-2xl"
-      />
-      <Container className="relative grid items-center gap-14 pt-16 pb-20 sm:pt-24 lg:grid-cols-[1.15fr_1fr] lg:pb-28">
-        <div>
-          <p className="inline-flex items-center gap-2.5 rounded-full border border-line-strong bg-white/[0.03] py-1.5 pr-4 pl-2 text-xs text-muted">
-            <span className="animate-pulse-dot size-2 rounded-full bg-accent" aria-hidden="true" />
-            {hero.eyebrow}
-          </p>
-          <h1 id="hero-titulo" className="mt-6 text-4xl leading-[1.05] font-semibold sm:text-5xl lg:text-6xl">
-            <span className="text-gradient">{hero.h1}</span>
+    <section aria-labelledby="hero-titulo" className="surface-night relative isolate overflow-hidden">
+      <div className="relative flex min-h-[100svh] flex-col justify-center pt-[calc(var(--nav-height)+2.5rem)] pb-[clamp(9rem,22vh,15rem)]">
+        {/* Se prolonga bajo el panel superpuesto para que los halos no se corten en el borde */}
+        <div aria-hidden="true" className="hero-backdrop absolute inset-x-0 top-0 h-[calc(100%+30rem)]" />
+        <ParticleField variant="nebula" />
+        <div className="container-content relative">
+          <h1 id="hero-titulo" className="hero-title t-display-1 max-w-[17ch] text-fg">
+            <SplitWords text={hero.h1} />
           </h1>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
+
+          <p className="hero-enter t-lead mt-8 max-w-2xl font-medium text-muted" style={{ "--i": 0 } as React.CSSProperties}>
             {before}
             <strong className="font-semibold text-fg">botkor</strong>
             {after}
           </p>
 
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <TrackedLink href="#cotizar" event="cta_click" eventParams={{ location: "hero_primary" }} variant="primary" size="lg">
+          <div className="hero-enter mt-10 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-8" style={{ "--i": 1 } as React.CSSProperties}>
+            <TrackedLink href="#cotizar" event="cta_click" eventParams={{ location: "hero_primary" }} variant="brand">
               {hero.primaryCta}
-              <ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-1" />
             </TrackedLink>
-            <TrackedLink href="#casos" event="cta_click" eventParams={{ location: "hero_portfolio" }} variant="secondary" size="lg">
+            <TrackedLink href="#casos" event="cta_click" eventParams={{ location: "hero_portfolio" }} unstyled className="link-underline text-base text-fg">
               {hero.secondaryCta}
             </TrackedLink>
           </div>
+
           <TrackedLink
             href={whatsappHref()}
             target="_blank"
@@ -48,27 +51,59 @@ export function Hero() {
             event="contact"
             eventParams={{ method: "whatsapp", location: "hero" }}
             unstyled
-            className="mt-5 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-fg"
+            className="hero-enter mt-7 inline-flex items-center gap-2 text-sm font-semibold text-fg/80 transition-colors hover:text-fg"
+            style={{ "--i": 2 } as React.CSSProperties}
           >
-            <WhatsAppIcon className="size-4 text-[#25D366]" />
+            <WhatsAppIcon className="size-[18px]" />
             ¿Prefieres hablar ya? Escríbenos por WhatsApp Business
           </TrackedLink>
-
-          <dl className="mt-12 grid grid-cols-2 gap-x-6 gap-y-6 border-t border-line pt-8 sm:grid-cols-4">
-            {hero.proof.map((p) => (
-              <div key={p.label}>
-                <dt className="sr-only">{p.label}</dt>
-                <dd>
-                  <span className="block font-mono text-2xl font-semibold text-fg">{p.value}</span>
-                  <span className="mt-1 block text-xs leading-snug text-subtle">{p.label}</span>
-                </dd>
-              </div>
-            ))}
-          </dl>
         </div>
 
-        <HeroVisual />
-      </Container>
+        <p
+          className="hero-enter absolute right-[var(--gutter)] bottom-[clamp(8.5rem,19vh,12rem)] hidden border-l-2 border-current py-2 pl-5 text-lg leading-snug font-medium md:block lg:right-[8%]"
+          style={{ "--i": 3 } as React.CSSProperties}
+        >
+          {tagA}.
+          <br />
+          {tagB}.
+        </p>
+      </div>
+
+      {/* Panel superpuesto: mitad sobre la marca, mitad sobre la siguiente sección (blanca) */}
+      <div className="relative bg-[linear-gradient(to_bottom,transparent_0,transparent_42%,var(--paper)_42%)]">
+        <div className="container-wide">
+          <div data-reveal="clip" className="surface-panel grid overflow-hidden rounded-[var(--radius-panel)] lg:grid-cols-[1.05fr_1fr]">
+            <div className="p-3 sm:p-4">
+              <HeroVisual />
+            </div>
+            <div className="flex flex-col justify-center gap-8 px-6 pt-4 pb-10 sm:px-10 lg:py-14 lg:pr-16 lg:pl-6">
+              <dl className="grid grid-cols-2 gap-x-6 gap-y-6">
+                {hero.proof.map((p, i) => (
+                  <div key={p.label} data-reveal style={{ "--i": i } as React.CSSProperties}>
+                    <dt className="sr-only">{p.label}</dt>
+                    <dd>
+                      <span className="t-metric block text-accent">{p.value}</span>
+                      <span className="mt-2 block text-sm text-muted">{p.label}</span>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+              <figure data-reveal style={{ "--i": 4 } as React.CSSProperties}>
+                <blockquote className="t-quote text-fg">«{statement}»</blockquote>
+                <figcaption className="mt-5 text-sm">
+                  <span className="block font-semibold">Equipo botkor</span>
+                  <span className="text-muted">Ingeniería web, SEO + GEO y automatización</span>
+                </figcaption>
+              </figure>
+              <div data-reveal style={{ "--i": 5 } as React.CSSProperties}>
+                <TrackedLink href="#proceso" event="cta_click" eventParams={{ location: "hero_panel" }} variant="outline">
+                  Ver cómo trabajamos
+                </TrackedLink>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

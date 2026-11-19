@@ -1,0 +1,89 @@
+/* ════════════════════════════════════════════════════════════════════
+   BOTKOR · DESIGN TOKENS
+   Único lugar para cambiar la identidad visual. Los componentes NUNCA usan
+   colores literales: consumen estos tokens (vía Tailwind o CSS).
+   Guía completa: docs/DESIGN_SYSTEM.md
+   ════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Color: paleta corporativa BOTKOR ─────────────────────────────
+     Azul Corporativo #0B1020 · Azul Tecnológico #2563EB · Morado Inteligente #7C3AED
+     Cian Estratégico #06B6D4 · Gris Balance #E5E7EB · Blanco Inteligente #FAFAFA
+     Contrastes (WCAG): blanco/azul 5.2 · azul/blanco 5.2 · morado/blanco 5.7 ·
+     cian/azul corporativo 7.8. El azul tecnológico sobre azul corporativo da 3.7:
+     por eso en fondos oscuros los acentos de texto usan cian. */
+  --brand: #2563eb;            /* Azul Tecnológico: CTA, enlaces, acentos sobre claro */
+  --brand-hover: #1d4ed8;
+  --brand-ink: #1d4ed8;        /* Azul para texto pequeño sobre blanco (6.7:1) */
+  --brand-contrast: #ffffff;   /* Texto/iconos sobre azul */
+  --violet: #7c3aed;           /* Morado Inteligente: IA e innovación */
+  --cyan: #06b6d4;             /* Cian Estratégico: automatización y acentos sobre oscuro */
+
+  --ink: #0b1020;              /* Azul Corporativo: texto principal y base oscura */
+  --ink-muted: #4b5563;        /* Texto secundario sobre claro (7.6:1) */
+  --paper: #ffffff;            /* Fondo claro y tarjetas */
+  --paper-muted: #fafafa;      /* Blanco Inteligente: fondo claro alternativo */
+  --gray: #e5e7eb;             /* Gris Balance: líneas y separadores */
+  --black: #0b1020;            /* Secciones oscuras (Azul Corporativo) */
+  --night: #000515;            /* Fondo del hero (azul noche) — fijo, no depende de la paleta */
+  --night-glow: #0a22d6;       /* Halos azules del fondo del hero — fijo */
+  --graphite: #131b33;         /* Paneles oscuros (tarjeta superpuesta, casos) */
+  --graphite-2: #1a2440;       /* Panel FAQ / panel de gestión */
+  --smoke: #a3abbd;            /* Texto secundario sobre oscuro (8.2:1) */
+  --danger: #d1342b;
+  --danger-on-dark: #ff8f87;
+  --whatsapp: #25d366;
+
+  /* ── Color: gradientes y efectos ─────────────────────────────────── */
+  --gradient-brand: linear-gradient(120deg, var(--brand) 0%, var(--violet) 100%);   /* "Paleta en acción" */
+  --shadow-card: 0 0 37px 16px rgb(203 213 225 / 0.5), 0 0 0 1px rgb(11 16 32 / 0.04);
+  --shadow-card-hover: 0 18px 50px 12px rgb(186 198 220 / 0.6), 0 0 0 1px rgb(37 99 235 / 0.12);
+  --shadow-panel: 0 30px 80px -20px rgb(11 16 32 / 0.5);
+  --overlay: rgb(11 16 32 / 0.6);
+
+  /* ── Tipografía ──────────────────────────────────────────────────── */
+  --font-display-stack: var(--font-inter-tight), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body-stack: var(--font-inter-tight), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-serif-stack: var(--font-newsreader), Georgia, "Times New Roman", serif;
+
+  --weight-display: 500;       /* Talamus: 500 en todos los titulares */
+  --weight-title: 600;
+  --weight-body: 400;
+  --weight-strong: 600;
+
+  /* Escala fluida: mín (390 px) → máx (1440 px). Valores máx medidos en la referencia */
+  --text-display-1: clamp(2.6rem, 1.15rem + 5.4vw, 6.75rem);   /* H1  ~108 px */
+  --text-display-2: clamp(2.1rem, 1.1rem + 3.6vw, 5rem);       /* H2  ~80 px  */
+  --text-display-3: clamp(1.6rem, 1.05rem + 1.9vw, 3.125rem);  /* H3 editorial ~50 px */
+  --text-title: clamp(1.15rem, 1rem + 0.45vw, 1.4rem);         /* títulos de fila/tarjeta */
+  --text-lead: clamp(1.05rem, 0.98rem + 0.3vw, 1.25rem);
+  --text-body: 1rem;
+  --text-small: 0.875rem;
+  --text-micro: 0.75rem;
+  --text-quote: clamp(1.25rem, 1.05rem + 0.7vw, 1.75rem);
+
+  --leading-display: 0.96;
+  --leading-heading: 1.06;
+  --leading-title: 1.25;
+  --leading-body: 1.55;
+
+  --tracking-display: -0.035em;
+  --tracking-heading: -0.025em;
+  --tracking-body: -0.005em;
+  --tracking-logo: 0.16em;
+
+  /* ── Geometría ───────────────────────────────────────────────────── */
+  --gutter: clamp(1rem, 0.6rem + 1.2vw, 1.25rem);        /* margen de borde (20 px en la referencia) */
+  --container: 72rem;                                    /* 1152 px: contenedor de contenido */
+  --container-wide: 87.5rem;                             /* 1400 px: header, paneles, footer */
+  --nav-height: 5.3125rem;                               /* 85 px */
+  --section-y: clamp(4.5rem, 3rem + 5vw, 9.375rem);      /* 150 px en desktop */
+  --section-y-sm: clamp(3.5rem, 2.5rem + 3.5vw, 6.25rem);/* 100 px */
+  --space-stack: clamp(2.5rem, 2rem + 2vw, 4.5rem);      /* separación título → contenido */
+
+  --radius-panel: 10px;
+  --radius-card: 10px;
+  --radius-button: 6px;
+  --radius-icon: 4px;
+  --row-border: 2px;
+}

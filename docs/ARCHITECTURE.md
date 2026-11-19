@@ -21,21 +21,23 @@
 src/
 ├─ app/
 │  ├─ layout.tsx                     # <html lang="es">, fuentes, skip-link, scripts de analítica
-│  ├─ globals.css                    # Tokens de diseño, utilidades (card-glow, reveal, bg-grid)
+│  ├─ globals.css                    # Importa src/styles/* y puentea tokens ⇄ Tailwind
 │  ├─ robots.ts                      # Permite Googlebot, GPTBot, PerplexityBot, ClaudeBot…
 │  ├─ sitemap.ts
-│  ├─ icon.svg
+│  ├─ favicon.ico                    # Favicon (16/32/48 px). El logo del JSON-LD está en public/icon.svg
 │  ├─ not-found.tsx
 │  ├─ api/lead/route.ts              # POST: seguridad, validación y reenvío a n8n
 │  └─ creacion-paginas-web-profesionales/
 │     ├─ page.tsx                    # Metadata + composición de secciones (SSG, revalidate 24 h)
 │     └─ opengraph-image.tsx         # Imagen OG generada en build
+├─ styles/                          # Sistema de diseño: tokens, superficies, tipografía, motion, componentes
 ├─ content/landing.ts                # TODO el copy: secciones, FAQ, precios (fuente del JSON-LD)
 ├─ components/
 │  ├─ ui/                            # Átomos: Container, Section, LinkButton, FeatureCard, Icon
 │  ├─ layout/                        # Header (logo = enlace, no heading), Footer
 │  ├─ sections/                      # Las 12 secciones (Server Components)
-│  ├─ forms/LeadForm.tsx             # 'use client'
+│  ├─ forms/LeadForm.tsx             # 'use client' (cargado en diferido vía LeadFormLoader)
+│  ├─ motion/                        # MotionRuntime, SplitWords, ParticleField
 │  ├─ analytics/                     # TrackedLink, WhatsAppFloat ('use client'), AnalyticsScripts
 │  └─ seo/JsonLdSchema.tsx           # Organization + WebPage + Service + FAQPage
 └─ lib/
@@ -52,7 +54,7 @@ src/
 |---|---|---|
 | Todas las secciones, Header, Footer, JSON-LD | **Server** | El HTML inicial contiene el 100 % del texto SEO/GEO |
 | FAQ | **Server** (`<details>/<summary>` nativo) | Acordeón accesible sin JS; las respuestas están en el DOM aunque estén cerradas |
-| Animaciones de entrada | **CSS** (`animation-timeline: view()`) | Mejora progresiva: sin JS y sin ocultar contenido a los crawlers |
+| Animaciones | CSS + `MotionRuntime` (client, ~2 KB) + Lenis diferido | Ver docs/ANIMATION_SYSTEM.md. Sin JS todo el contenido es visible |
 | `LeadForm` | Client | Estado, validación en tiempo real, `fetch` |
 | `TrackedLink`, `WhatsAppFloat` | Client (islas mínimas) | Solo `onClick` → evento analítico |
 

@@ -1,0 +1,193 @@
+/* ════════════════════════════════════════════════════════════════════
+   MOTION SYSTEM
+   - Tokens de duración, curvas, distancias e intensidad.
+   - Los estados ocultos solo aplican bajo html.motion (lo añade un script
+     inline antes del primer pintado). Sin JS o con reduced-motion, todo
+     el contenido es visible desde el inicio.
+   Guía: docs/ANIMATION_SYSTEM.md
+   ════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --dur-fast: 300ms;          /* hovers, botones (ref: 0.3s) */
+  --dur-nav: 500ms;           /* header ocultar/mostrar (ref: 0.5s) */
+  --dur-medium: 500ms;        /* filas de lista (ref: 0.5s) */
+  --dur-slow: 900ms;          /* fade-up de bloques */
+  --dur-hero: 900ms;          /* palabras del H1 (ref: 0.7s por carácter) */
+
+  --ease-out: cubic-bezier(0.3, 1, 0.7, 1);          /* filas (medida) */
+  --ease-in-out: cubic-bezier(0.86, 0, 0.07, 1);     /* titulares (medida) */
+  --ease-nav: cubic-bezier(0.34, 0.7, 0.27, 1);      /* header (medida) */
+  --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --reveal-distance: 48px;    /* desplazamiento vertical de entrada */
+  --row-scale: 0.8;           /* escala inicial de filas (medida) */
+  --row-delay: 150ms;         /* ref: 500ms; reducido para no retrasar la lectura */
+  --stagger: 80ms;            /* retraso entre elementos hermanos */
+  --word-stagger: 45ms;       /* retraso entre palabras de un titular */
+  --hero-delay: 120ms;        /* inicio de la animación del H1 */
+  --parallax-intensity: 1;    /* multiplicador global del parallax (0 = desactivado) */
+}
+
+@media (max-width: 767px) {
+  :root {
+    --reveal-distance: 28px;
+    --dur-slow: 700ms;
+    --stagger: 50ms;
+    --parallax-intensity: 0;
+  }
+}
+
+/* ── Reveal por scroll (IntersectionObserver añade .is-inview) ─────── */
+.motion [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-distance), 0);
+  transition:
+    opacity var(--dur-slow) var(--ease-soft),
+    transform var(--dur-slow) var(--ease-soft);
+  transition-delay: calc(var(--i, 0) * var(--stagger));
+  will-change: opacity, transform;
+}
+.motion [data-reveal="fade"] {
+  transform: none;
+}
+.motion [data-reveal="row"] {
+  transform: scale(var(--row-scale));
+  transition-duration: var(--dur-medium);
+  transition-timing-function: var(--ease-out);
+  transition-delay: calc(var(--row-delay) + var(--i, 0) * var(--stagger));
+}
+.motion [data-reveal="clip"] {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(18% 0 18% 0 round var(--radius-panel));
+  transition: clip-path 1100ms var(--ease-in-out);
+}
+.motion [data-reveal="words"] {
+  opacity: 1;
+  transform: none;
+}
+.motion [data-reveal].is-inview {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 0 0 round var(--radius-panel));
+  will-change: auto;
+}
+
+/* ── Titulares divididos por palabras ──────────────────────────────── */
+.split-w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+.split-w > span {
+  display: inline-block;
+}
+.motion [data-reveal="words"] .split-w > span {
+  transform: translate3d(0, 110%, 0);
+  transition: transform var(--dur-hero) var(--ease-in-out);
+  transition-delay: calc(var(--wi, 0) * var(--word-stagger));
+}
+.motion [data-reveal="words"].is-inview .split-w > span {
+  transform: none;
+}
+
+/* H1 del hero: solo CSS, empieza en el primer pintado (no depende de JS) */
+@keyframes word-rise {
+  from { transform: translate3d(0, 110%, 0); }
+  to { transform: none; }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translate3d(0, var(--reveal-distance), 0); }
+  to { opacity: 1; transform: none; }
+}
+/* El H1 es el elemento LCP: en móvil (CPU/red lentas) se muestra sin animación
+   para cumplir LCP < 2,5 s; desde 768 px se revela por palabras como en la referencia. */
+@media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
+  .hero-title .split-w > span {
+    animation: word-rise var(--dur-hero) var(--ease-in-out) both;
+    animation-delay: calc(var(--hero-delay) + var(--wi, 0) * var(--word-stagger));
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-enter {
+    animation: fade-up var(--dur-slow) var(--ease-soft) both;
+    animation-delay: calc(var(--hero-delay) + 450ms + var(--i, 0) * 110ms);
+  }
+}
+
+/* ── Menú: panel y elementos escalonados ───────────────────────────── */
+@keyframes menu-panel {
+  from { opacity: 0; transform: translate3d(0, -10px, 0) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .menu-enter {
+    transform-origin: top right;
+    animation: menu-panel var(--dur-fast) var(--ease-out) both;
+  }
+  .menu-enter .menu-item {
+    animation: fade-up var(--dur-medium) var(--ease-soft) both;
+    animation-delay: calc(60ms + var(--i, 0) * 35ms);
+  }
+}
+
+/* ── Marquee (pausado fuera de pantalla con [data-live]) ───────────── */
+@keyframes marquee {
+  to { transform: translate3d(-50%, 0, 0); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+  animation-play-state: paused;
+}
+.is-live .marquee-track {
+  animation-play-state: running;
+}
+
+/* ── Acordeón <details> con apertura animada (mejora progresiva) ───── */
+:root {
+  interpolate-size: allow-keywords;
+}
+details.accordion::details-content {
+  block-size: 0;
+  overflow: hidden;
+  transition:
+    block-size var(--dur-medium) var(--ease-out),
+    content-visibility var(--dur-medium) allow-discrete;
+}
+details.accordion[open]::details-content {
+  block-size: auto;
+}
+
+/* ── Lenis (scroll inercial) ───────────────────────────────────────── */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ── Accesibilidad: sin movimiento ─────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}

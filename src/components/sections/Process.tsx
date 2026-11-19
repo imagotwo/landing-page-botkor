@@ -1,37 +1,59 @@
+import { TrackedLink } from "@/components/analytics/TrackedLink";
+import { ParticleField } from "@/components/motion/ParticleField";
+import { SplitWords } from "@/components/motion/SplitWords";
+import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { processSection } from "@/content/landing";
 
-/** 9. Proceso — timeline de 4 pasos como lista ordenada (semántica correcta para pasos secuenciales). */
+/**
+ * 9. Proceso — patrón "module-cta" de la referencia: superficie negra con un gran
+ * cúmulo de brasas a la izquierda y el titular alineado a la derecha; debajo, la
+ * línea de tiempo de 4 pasos en filas con filete superior.
+ */
 export function Process() {
+  const id = processSection.id;
   return (
     <Section
-      id={processSection.id}
-      eyebrow={processSection.eyebrow}
-      title={processSection.h2}
-      intro={processSection.intro}
-      className="border-y border-line bg-surface/30"
+      id={id}
+      surface="dark"
+      background={
+        <div aria-hidden="true" className="absolute -top-10 left-[-25%] h-[760px] w-[110%] opacity-60 md:left-[-10%] md:w-[75%] md:opacity-100" data-parallax="0.35">
+          <ParticleField variant="embers" />
+        </div>
+      }
     >
-      <ol className="relative grid gap-6 lg:grid-cols-4" role="list">
-        <span
-          aria-hidden="true"
-          className="absolute top-6 right-[12%] left-[12%] hidden h-px bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0 lg:block"
-        />
-        {processSection.steps.map((step, i) => (
-          <li key={step.title} className="reveal relative flex gap-5 lg:flex-col lg:gap-0">
-            <span className="relative z-10 flex size-12 shrink-0 items-center justify-center rounded-full border border-accent/50 bg-bg font-mono text-sm font-semibold text-accent shadow-[0_0_30px_-6px_rgb(139_245_200/0.5)] lg:mx-auto">
-              0{i + 1}
-            </span>
-            <div className="lg:mt-6 lg:text-center">
-              <p className="font-mono text-xs text-subtle">{step.time}</p>
-              <p className="mt-1.5 text-base font-semibold text-fg">
+      <Container className="relative">
+        <header className="ml-auto max-w-xl pt-[clamp(8rem,22vw,20rem)] md:pt-[clamp(6rem,14vw,14rem)] lg:mr-[2%]">
+          <p className="t-eyebrow mb-6" data-reveal="fade">{processSection.eyebrow}</p>
+          <h2 id={`${id}-titulo`} className="t-display-2 text-fg" data-reveal="words">
+            <SplitWords text={processSection.h2} />
+          </h2>
+          <p className="t-lead mt-7 text-muted" data-reveal style={{ "--i": 2 } as React.CSSProperties}>
+            {processSection.intro}
+          </p>
+          <div className="mt-9" data-reveal style={{ "--i": 3 } as React.CSSProperties}>
+            <TrackedLink href="#cotizar" event="cta_click" eventParams={{ location: "process" }} variant="brand">
+              Empezar mi diagnóstico
+            </TrackedLink>
+          </div>
+        </header>
+
+        <ol className="mt-[var(--space-stack)] grid gap-x-8 md:grid-cols-2 lg:grid-cols-4" role="list">
+          {processSection.steps.map((step, i) => (
+            <li key={step.title} data-reveal="row" style={{ "--i": i } as React.CSSProperties} className="border-t-2 border-paper py-8">
+              <div className="flex items-baseline justify-between">
+                <span className="t-metric text-accent" aria-hidden="true">0{i + 1}</span>
+                <span className="text-xs font-semibold text-muted">{step.time}</span>
+              </div>
+              <p className="t-title mt-6 text-fg">
                 <span className="sr-only">Paso {i + 1}: </span>
                 {step.title}
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-muted">{step.description}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
+              <p className="t-body mt-3 text-[15px] text-muted">{step.description}</p>
+            </li>
+          ))}
+        </ol>
+      </Container>
     </Section>
   );
 }

@@ -1,0 +1,213 @@
+/* ════════════════════════════════════════════════════════════════════
+   COMPONENTES BASE (presentación). Solo consumen tokens.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Botón con caja de icono que se expande en hover ─────────────────
+   Variantes: .btn--dark (azul corporativo + caja azul) · .btn--brand (azul tecnológico + caja blanca)
+              .btn--light (blanco) · .btn--outline (borde cian, para fondos oscuros)   */
+.btn {
+  --btn-bg: var(--ink);
+  --btn-fg: var(--paper);
+  --btn-icon-bg: var(--brand);
+  --btn-icon-fg: var(--paper);
+  --btn-hover-fg: var(--paper);
+  --btn-h: 3.125rem;           /* 50 px (medido) */
+  --btn-icon: calc(var(--btn-h) - 10px);
+
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--btn-h);
+  padding: 0 calc(var(--btn-icon) + 1.75rem) 0 1rem;
+  border-radius: var(--radius-button);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.15;
+  text-align: left;
+  overflow: hidden;
+  transition: color var(--dur-fast) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+.btn__label {
+  position: relative;
+  z-index: 1;
+  padding-block: 0.7rem;
+}
+.btn__icon {
+  position: absolute;
+  z-index: 0;
+  top: 5px;
+  right: 5px;
+  bottom: 5px;
+  width: var(--btn-icon);
+  border-radius: var(--radius-icon);
+  background: var(--btn-icon-bg);
+  color: var(--btn-icon-fg);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  transition: width var(--dur-fast) var(--ease-out);
+}
+.btn__icon svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  margin-right: calc((var(--btn-icon) - 1.4rem) / 2);
+  transform: rotate(-45deg);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.btn:hover,
+.btn:focus-visible {
+  color: var(--btn-hover-fg);
+}
+.btn:hover .btn__icon,
+.btn:focus-visible .btn__icon {
+  width: calc(100% - 10px);
+}
+.btn:hover .btn__icon svg,
+.btn:focus-visible .btn__icon svg {
+  transform: rotate(0deg);
+}
+.btn:active {
+  transform: scale(0.985);
+}
+.btn[disabled] {
+  cursor: progress;
+  opacity: 0.85;
+}
+
+.btn--brand {
+  --btn-bg: var(--brand);
+  --btn-fg: var(--brand-contrast);
+  --btn-icon-bg: var(--paper);
+  --btn-icon-fg: var(--brand-ink);
+  --btn-hover-fg: var(--brand-ink);
+}
+.btn--light {
+  --btn-bg: var(--paper);
+  --btn-fg: var(--ink);
+  --btn-icon-bg: var(--ink);
+  --btn-icon-fg: var(--paper);
+  --btn-hover-fg: var(--paper);
+}
+.btn--outline {
+  --btn-bg: transparent;
+  --btn-fg: var(--cyan);
+  --btn-icon-bg: var(--cyan);
+  --btn-icon-fg: var(--ink);
+  --btn-hover-fg: var(--ink);
+  box-shadow: inset 0 0 0 2px var(--cyan);
+}
+.btn--block {
+  width: 100%;
+}
+
+/* ── Enlace de texto con subrayado animado (filas, "Más información +") ── */
+.link-underline {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 0.3rem;
+  font-weight: 600;
+  font-size: var(--text-small);
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: currentColor;
+  transform-origin: right;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.link-underline:hover::after {
+  transform: scaleX(0.35);
+}
+
+/* ── Tarjeta flotante blanca (constelación y servicios) ──────────────── */
+.card-float {
+  position: relative;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  transition:
+    box-shadow var(--dur-medium) var(--ease-out),
+    transform var(--dur-medium) var(--ease-out);
+}
+@media (hover: hover) {
+  .card-float:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+/* ── Lista de filas editoriales (título | descripción | acción) ──────── */
+.row-list > li {
+  border-top: var(--row-border) solid var(--surface-line-strong);
+  transform-origin: 50% 0;
+}
+.row-list > li:last-child {
+  border-bottom: var(--row-border) solid var(--surface-line-strong);
+}
+
+/* ── Icono en caja ─────────────────────────────────────────────────── */
+.icon-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  color: var(--surface-accent);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.icon-box svg {
+  width: 2.25rem;
+  height: 2.25rem;
+  stroke-width: 1.25;
+}
+
+/* ── Campos de formulario ──────────────────────────────────────────── */
+.field {
+  width: 100%;
+  height: 3.25rem;
+  padding: 0 1rem;
+  border-radius: var(--radius-button);
+  border: 1.5px solid var(--surface-line);
+  background: var(--surface-field);
+  color: var(--surface-fg);
+  font-size: 1rem;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+.field::placeholder {
+  color: color-mix(in oklab, var(--surface-muted) 80%, transparent);
+}
+.field:hover {
+  border-color: color-mix(in oklab, var(--surface-fg) 45%, transparent);
+}
+.field:focus {
+  outline: none;
+  border-color: var(--surface-fg);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--brand) 45%, transparent);
+}
+.field[aria-invalid="true"] {
+  border-color: var(--surface-danger);
+}
+.field-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: var(--text-small);
+  font-weight: 600;
+}
+.field-error {
+  margin-top: 0.45rem;
+  font-size: var(--text-small);
+  color: var(--surface-danger);
+}

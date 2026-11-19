@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
-import { ArrowRight, Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { WhatsAppIcon } from "@/components/analytics/WhatsAppIcon";
-import { buttonStyles } from "@/components/ui/LinkButton";
+import { ButtonContent, buttonClass } from "@/components/ui/LinkButton";
 import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/cn";
 import { SECTORS, WEB_TYPES, leadFieldSchemas, type LeadField } from "@/lib/lead-schema";
@@ -124,10 +124,10 @@ export function LeadForm() {
     const firstName = values.fullName.split(" ")[0] ?? "";
     return (
       <div role="status" aria-live="polite" className="flex flex-col items-start gap-5 py-6 text-left">
-        <span className="inline-flex size-14 items-center justify-center rounded-2xl bg-accent/15 text-accent">
+        <span className="inline-flex size-14 items-center justify-center rounded-[var(--radius-button)] bg-brand text-paper">
           <Check className="size-7" strokeWidth={2.5} aria-hidden="true" />
         </span>
-        <p className="text-2xl font-semibold text-fg">¡Gracias, {firstName}! Recibimos tu solicitud.</p>
+        <p className="t-display-3 text-[clamp(1.6rem,1.2rem+1.2vw,2.25rem)] text-fg">¡Gracias, {firstName}! Recibimos tu solicitud.</p>
         <p className="text-muted">
           Un especialista de botkor revisará tu proyecto y te contactará en menos de 24 horas hábiles con una propuesta
           personalizada. Si prefieres adelantar la conversación, escríbenos ahora:
@@ -137,25 +137,20 @@ export function LeadForm() {
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => trackEvent("contact", { method: "whatsapp", location: "form_success" })}
-          className={buttonStyles("secondary")}
+          className={buttonClass("dark")}
         >
-          <WhatsAppIcon className="size-5 text-[#25D366]" />
-          Continuar por WhatsApp
+          <ButtonContent icon={<WhatsAppIcon className="![transform:none]" />}>Continuar por WhatsApp</ButtonContent>
         </a>
       </div>
     );
   }
 
-  const fieldClass = (f: LeadField) =>
-    cn(
-      "peer h-12 w-full rounded-xl border bg-bg/60 px-4 text-[15px] text-fg placeholder:text-subtle transition-colors duration-200",
-      "focus:border-accent focus:outline-none focus:ring-4 focus:ring-accent/15",
-      errors[f] ? "border-danger/70" : "border-line-strong hover:border-white/25",
-    );
+  // Presentación: clases del sistema de diseño (src/styles/components.css → .field)
+  const fieldClass = (_f: LeadField) => "field";
 
   const errorText = (f: LeadField) =>
     errors[f] ? (
-      <p id={id(`${f}-error`)} className="mt-2 text-sm text-danger">
+      <p id={id(`${f}-error`)} className="field-error">
         {errors[f]}
       </p>
     ) : null;
@@ -174,7 +169,7 @@ export function LeadForm() {
       </div>
 
       <div>
-        <label htmlFor={id("fullName")} className="mb-2 block text-sm font-medium text-fg">
+        <label htmlFor={id("fullName")} className="field-label">
           Nombre completo
         </label>
         <input
@@ -196,7 +191,7 @@ export function LeadForm() {
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor={id("company")} className="mb-2 block text-sm font-medium text-fg">
+          <label htmlFor={id("company")} className="field-label">
             Empresa
           </label>
           <input
@@ -216,7 +211,7 @@ export function LeadForm() {
           {errorText("company")}
         </div>
         <div>
-          <label htmlFor={id("sector")} className="mb-2 block text-sm font-medium text-fg">
+          <label htmlFor={id("sector")} className="field-label">
             Sector
           </label>
           <div className="relative">
@@ -227,14 +222,14 @@ export function LeadForm() {
               value={values.sector}
               onChange={(e) => update("sector", e.target.value)}
               onBlur={() => blur("sector")}
-              className={cn(fieldClass("sector"), "appearance-none pr-10", !values.sector && "text-subtle")}
+              className={cn(fieldClass("sector"), "appearance-none pr-10", !values.sector && "text-muted")}
               {...aria("sector")}
             >
               <option value="" disabled>
                 Selecciona tu sector
               </option>
               {SECTORS.map((s) => (
-                <option key={s.value} value={s.value} className="bg-surface text-fg">
+                <option key={s.value} value={s.value}>
                   {s.label}
                 </option>
               ))}
@@ -246,7 +241,7 @@ export function LeadForm() {
       </div>
 
       <div>
-        <label htmlFor={id("contact")} className="mb-2 block text-sm font-medium text-fg">
+        <label htmlFor={id("contact")} className="field-label">
           WhatsApp o correo electrónico
         </label>
         <input
@@ -268,19 +263,19 @@ export function LeadForm() {
       </div>
 
       <fieldset aria-describedby={errors.webType ? id("webType-error") : undefined}>
-        <legend className="mb-3 text-sm font-medium text-fg">Tipo de web</legend>
+        <legend className="field-label mb-3">Tipo de web</legend>
         <div className="grid grid-cols-2 gap-3">
           {WEB_TYPES.map((t) => (
             <label
               key={t.value}
               className={cn(
-                "relative flex h-12 cursor-pointer items-center justify-center rounded-xl border text-sm font-medium transition-all duration-200",
-                "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent",
+                "relative flex h-12 cursor-pointer items-center justify-center rounded-[var(--radius-button)] border-[1.5px] text-sm font-semibold transition-[background-color,border-color,color] duration-300",
+                "has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand",
                 values.webType === t.value
-                  ? "border-accent bg-accent/10 text-fg"
+                  ? "border-brand bg-brand text-paper"
                   : errors.webType
-                    ? "border-danger/60 text-muted hover:text-fg"
-                    : "border-line-strong text-muted hover:border-white/25 hover:text-fg",
+                    ? "border-danger text-fg hover:border-fg"
+                    : "border-line text-fg hover:border-fg",
               )}
             >
               <input
@@ -300,7 +295,7 @@ export function LeadForm() {
 
       <div aria-live="assertive" className="min-h-0">
         {status === "error" && serverError ? (
-          <p className="rounded-xl border border-danger/40 bg-danger/10 px-4 py-3 text-sm text-danger">{serverError}</p>
+          <p className="rounded-[var(--radius-button)] border-[1.5px] border-danger px-4 py-3 text-sm font-medium text-danger">{serverError}</p>
         ) : null}
       </div>
 
@@ -308,22 +303,18 @@ export function LeadForm() {
         type="submit"
         disabled={status === "submitting"}
         aria-busy={status === "submitting"}
-        className={cn(buttonStyles("primary", "lg"), "w-full")}
+        className={buttonClass("dark", true)}
       >
         {status === "submitting" ? (
-          <>
-            <span aria-hidden="true" className="size-4 animate-spin rounded-full border-2 border-accent-ink/30 border-t-accent-ink" />
+          <ButtonContent icon={<span className="mr-[calc((var(--btn-icon)-1.1rem)/2)] size-[1.1rem] animate-spin rounded-full border-2 border-ink/25 border-t-ink" />}>
             Enviando solicitud…
-          </>
+          </ButtonContent>
         ) : (
-          <>
-            Solicitar mi cotización gratis
-            <ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-1" />
-          </>
+          <ButtonContent>Solicitar mi cotización gratis</ButtonContent>
         )}
       </button>
 
-      <p id={id("form-note")} className="text-center text-xs leading-relaxed text-subtle">
+      <p id={id("form-note")} className="text-center text-xs leading-relaxed text-muted">
         Respuesta en menos de 24 h hábiles. Al enviar aceptas que botkor use tus datos solo para responder tu solicitud.
       </p>
     </form>

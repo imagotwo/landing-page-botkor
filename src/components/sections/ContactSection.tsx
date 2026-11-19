@@ -1,42 +1,39 @@
-import { LeadForm } from "@/components/forms/LeadForm";
+import { LeadFormLoader } from "@/components/forms/LeadFormLoader";
+import { SplitWords } from "@/components/motion/SplitWords";
 import { Check } from "@/components/ui/Icon";
-import { Container } from "@/components/ui/Container";
 import { contact } from "@/content/landing";
 
-/** 12. Cierre transaccional — H2 + formulario (isla cliente). */
+/** 12. Cierre — superficie de marca (cierra el ciclo visual abierto por el hero) + formulario en tarjeta blanca. */
 export function ContactSection() {
   const headingId = `${contact.id}-titulo`;
   return (
-    <section id={contact.id} aria-labelledby={headingId} className="relative overflow-hidden py-20 sm:py-28">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 left-1/2 h-[480px] w-[1000px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(139_245_200/0.12),transparent)] blur-2xl"
-      />
-      <Container className="relative grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
-        <div className="reveal">
-          <p className="mb-4 inline-flex items-center gap-2 font-mono text-xs tracking-[0.18em] text-accent uppercase">
-            <span aria-hidden="true" className="h-px w-6 bg-accent/60" />
-            {contact.eyebrow}
-          </p>
-          <h2 id={headingId} className="text-3xl leading-tight font-semibold text-fg sm:text-4xl lg:text-[2.75rem]">
-            {contact.h2}
+    <section id={contact.id} aria-labelledby={headingId} className="surface-brand relative isolate overflow-hidden py-[var(--section-y)]">
+      <div className="container-content grid gap-12 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
+        <div>
+          <p className="t-eyebrow mb-6" data-reveal="fade">{contact.eyebrow}</p>
+          <h2 id={headingId} className="t-display-2 text-fg" data-reveal="words">
+            <SplitWords text={contact.h2} />
           </h2>
-          <p className="mt-5 text-base leading-relaxed text-muted sm:text-lg">{contact.intro}</p>
-          <ul className="mt-8 space-y-3.5" role="list">
-            {contact.assurances.map((a) => (
-              <li key={a} className="flex items-center gap-3 text-[15px] text-fg">
-                <span className="flex size-6 items-center justify-center rounded-full bg-accent/15">
-                  <Check aria-hidden="true" className="size-3.5 text-accent" strokeWidth={3} />
+          <p className="t-lead mt-7 font-medium text-muted" data-reveal style={{ "--i": 2 } as React.CSSProperties}>
+            {contact.intro}
+          </p>
+          <ul className="mt-9 space-y-4" role="list">
+            {contact.assurances.map((a, i) => (
+              <li key={a} className="flex items-center gap-3 text-base font-semibold" data-reveal style={{ "--i": 3 + i } as React.CSSProperties}>
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-[var(--radius-icon)] bg-paper">
+                  <Check aria-hidden="true" className="size-4 text-brand-ink" strokeWidth={3} />
                 </span>
                 {a}
               </li>
             ))}
           </ul>
         </div>
-        <div className="relative rounded-[1.5rem] border border-line-strong bg-surface/90 p-6 shadow-2xl shadow-black/40 backdrop-blur sm:p-8">
-          <LeadForm />
+        <div data-reveal style={{ "--i": 1 } as React.CSSProperties}>
+          <div className="surface-light rounded-[var(--radius-panel)] p-6 shadow-[var(--shadow-panel)] sm:p-9">
+            <LeadFormLoader />
+          </div>
         </div>
-      </Container>
+      </div>
     </section>
   );
 }

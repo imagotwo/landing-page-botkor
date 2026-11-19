@@ -13,7 +13,7 @@ export function WhatsAppFloat() {
       rel="noopener noreferrer"
       aria-label="Escríbenos por WhatsApp (se abre en una nueva pestaña)"
       onClick={() => trackEvent("contact", { method: "whatsapp", location: "floating_button" })}
-      className="group fixed right-4 bottom-4 z-50 inline-flex items-center gap-2 rounded-full bg-[#25D366] p-3.5 text-[#062b14] shadow-[0_10px_40px_-8px_rgb(37_211_102/0.7)] transition-transform duration-300 hover:scale-105 sm:right-6 sm:bottom-6 sm:pr-5"
+      className="group fixed right-4 bottom-4 z-30 inline-flex items-center gap-2 rounded-[var(--radius-button)] bg-whatsapp p-3 text-[#062b14] shadow-[0_12px_32px_-10px_rgb(0_0_0/0.45)] transition-transform duration-300 ease-[var(--ease-out)] hover:-translate-y-1 sm:right-6 sm:bottom-6 sm:pr-4"
     >
       <WhatsAppIcon className="size-6" />
       <span className="hidden text-sm font-semibold sm:inline">WhatsApp</span>

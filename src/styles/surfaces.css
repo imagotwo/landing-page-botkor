@@ -1,0 +1,110 @@
+/* ════════════════════════════════════════════════════════════════════
+   SUPERFICIES (temas por sección)
+   Cada sección declara su superficie; los componentes internos usan los
+   tokens semánticos (--surface-*) y se adaptan solos a fondo claro/oscuro/marca.
+   ════════════════════════════════════════════════════════════════════ */
+
+:root,
+.surface-light {
+  --surface-bg: var(--paper);
+  --surface-fg: var(--ink);
+  --surface-muted: var(--ink-muted);
+  --surface-line: rgb(11 16 32 / 0.12);
+  --surface-line-strong: var(--ink);
+  --surface-card: var(--paper);
+  --surface-accent: var(--brand-ink);
+  --surface-field: var(--paper);
+  --surface-danger: var(--danger);
+  --particle-color: 37 99 235;
+}
+
+.surface-dark {
+  --surface-bg: var(--black);
+  --surface-fg: var(--paper);
+  --surface-muted: var(--smoke);
+  --surface-line: rgb(255 255 255 / 0.16);
+  --surface-line-strong: var(--paper);
+  --surface-card: var(--graphite);
+  --surface-accent: var(--cyan);
+  --surface-field: var(--graphite);
+  --surface-danger: var(--danger-on-dark);
+  --particle-color: 6 182 212;
+}
+
+/* Hero: azul noche con halos (ver .hero-backdrop) y partículas blancas encima */
+.surface-night {
+  --surface-bg: var(--night);
+  --surface-fg: var(--paper);
+  --surface-muted: rgb(255 255 255 / 0.74);
+  --surface-line: rgb(255 255 255 / 0.18);
+  --surface-line-strong: var(--paper);
+  --surface-card: var(--graphite);
+  --surface-accent: var(--brand);
+  --surface-field: var(--graphite);
+  --surface-danger: var(--danger-on-dark);
+  --particle-color: 255 255 255;
+  --particle-glow: 255 204 0;
+}
+
+.surface-panel {
+  --surface-bg: var(--graphite);
+  --surface-fg: var(--paper);
+  --surface-muted: var(--smoke);
+  --surface-line: rgb(255 255 255 / 0.16);
+  --surface-line-strong: var(--paper);
+  --surface-card: var(--graphite-2);
+  --surface-accent: var(--cyan);
+  --surface-field: var(--black);
+  --surface-danger: var(--danger-on-dark);
+}
+
+.surface-panel-2 {
+  --surface-bg: var(--graphite-2);
+  --surface-fg: var(--paper);
+  --surface-muted: #b4bccd;
+  --surface-line: rgb(255 255 255 / 0.85);
+  --surface-line-strong: var(--paper);
+  --surface-card: var(--graphite);
+  --surface-accent: var(--cyan);
+  --surface-danger: var(--danger-on-dark);
+}
+
+.surface-brand {
+  --surface-bg: var(--brand);
+  --surface-fg: var(--paper);
+  --surface-muted: rgb(255 255 255 / 0.84);
+  --surface-line: rgb(255 255 255 / 0.28);
+  --surface-line-strong: var(--paper);
+  --surface-card: var(--paper);
+  --surface-accent: var(--paper);
+  --surface-field: var(--paper);
+  --surface-danger: #ffe4e6;
+}
+
+/* Composición de fondo del hero: halos azules difusos arriba-izquierda y abajo-derecha.
+   La capa se prolonga --hero-backdrop-extra bajo el panel superpuesto; por eso los halos
+   inferiores se anclan al borde real del hero (100% - extra) y se dimensionan en vw/vh. */
+.hero-backdrop {
+  --hero-backdrop-extra: 30rem;
+  --hb-bottom: calc(100% - var(--hero-backdrop-extra));
+  background:
+    radial-gradient(max(42vw, 20rem) max(40vh, 18rem) at 4% 3%, color-mix(in srgb, var(--night-glow) 62%, transparent) 0%, transparent 100%),
+    radial-gradient(max(30vw, 16rem) max(34vh, 15rem) at 74% calc(var(--hb-bottom) - 16vh), color-mix(in srgb, var(--night-glow) 42%, transparent) 0%, transparent 100%),
+    radial-gradient(max(22vw, 12rem) max(26vh, 12rem) at 100% var(--hb-bottom), color-mix(in srgb, var(--night-glow) 85%, transparent) 0%, transparent 100%),
+    var(--night);
+}
+
+.surface-light,
+.surface-night,
+.surface-dark,
+.surface-panel,
+.surface-panel-2,
+.surface-brand {
+  background-color: var(--surface-bg);
+  color: var(--surface-fg);
+}
+
+/* Superficie de marca (contacto): degradado Azul Tecnológico → Morado Inteligente */
+.surface-brand {
+  background-image: var(--gradient-brand);
+}

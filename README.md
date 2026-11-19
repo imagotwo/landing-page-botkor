@@ -17,7 +17,8 @@ npm run build && npm start   # build de producción
 |---|---|
 | Textos, FAQ y precios (también alimentan el JSON-LD) | `src/content/landing.ts` |
 | Marca, correo, WhatsApp, redes (`sameAs`) | `src/lib/site.ts` |
-| Colores y tipografía | `src/app/globals.css` (`@theme`) |
+| Colores, tipografía, geometría | `src/styles/design-tokens.css` (ver `docs/DESIGN_SYSTEM.md`) |
+| Animaciones | `src/styles/motion.css` (ver `docs/ANIMATION_SYSTEM.md`) |
 | Reglas del formulario | `src/lib/lead-schema.ts` |
 
 ## Variables de entorno
@@ -37,4 +38,11 @@ npm run build && npm start   # build de producción
 - [ ] Validar el JSON-LD en https://search.google.com/test/rich-results
 - [ ] Con varias instancias serverless, mover el rate limit a Redis/KV (ver `docs/ARCHITECTURE.md` §4)
 
-La arquitectura completa está en [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+## Validación visual
+
+```bash
+npm run build && npm start        # en otra terminal:
+npm run visual:check              # capturas + pruebas funcionales en Chrome → visual-out/
+```
+
+Documentación: [ARCHITECTURE](docs/ARCHITECTURE.md) · [DESIGN_SYSTEM](docs/DESIGN_SYSTEM.md) · [ANIMATION_SYSTEM](docs/ANIMATION_SYSTEM.md) · [VISUAL_IMPLEMENTATION](docs/VISUAL_IMPLEMENTATION.md) · [VISUAL_REFERENCE_AUDIT](docs/VISUAL_REFERENCE_AUDIT.md)
