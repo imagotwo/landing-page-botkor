@@ -155,6 +155,30 @@ export function WhyBotkor() {
       <SectionHeader id={whyBotkor.id} eyebrow={whyBotkor.eyebrow} title={whyBotkor.h2} intro={whyBotkor.intro} />
       <Container className={cn("mt-[var(--space-stack)]")}>
         <RowList items={whyBotkor.items} aside="tag" />
+
+        {/* Datos verificables con fuente enlazada (densidad de hechos para GEO / E-E-A-T) */}
+        <div className="mt-[var(--space-stack)] border-t border-line pt-12">
+          <h3 className="t-title max-w-2xl text-fg" data-reveal>{whyBotkor.evidenceTitle}</h3>
+          <ul className="mt-10 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4" role="list">
+            {whyBotkor.evidence.map((e, i) => (
+              <li key={e.url} data-reveal style={{ "--i": i } as React.CSSProperties}>
+                <figure className="flex h-full flex-col">
+                  <p className="text-[clamp(2.5rem,2rem+2vw,3.5rem)] leading-none font-medium tracking-[-0.04em] text-accent tabular-nums">{e.value}</p>
+                  <blockquote cite={e.url} className="mt-4 flex-1 text-[15px] leading-relaxed text-muted">
+                    <p>{e.text}</p>
+                  </blockquote>
+                  <figcaption className="mt-4 text-xs">
+                    Fuente:{" "}
+                    <a href={e.url} target="_blank" rel="noopener" className="font-semibold text-fg underline decoration-line underline-offset-4 hover:decoration-current">
+                      {e.source}
+                      <span className="sr-only"> (se abre en una nueva pestaña)</span>
+                    </a>
+                  </figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </div>
       </Container>
     </Section>
   );

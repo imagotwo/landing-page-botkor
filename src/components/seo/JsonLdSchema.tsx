@@ -1,4 +1,4 @@
-import { faq, hero, pricing, solutions } from "@/content/landing";
+import { faq, hero, pageDates, pricing, solutions } from "@/content/landing";
 import { landingUrl, siteConfig } from "@/lib/site";
 
 /**
@@ -9,6 +9,8 @@ import { landingUrl, siteConfig } from "@/lib/site";
 export function buildJsonLd() {
   const orgId = `${siteConfig.url}/#organization`;
   const priceNumber = (v: string) => v.replace(/[^\d]/g, "");
+  // "COP $970.000" → COP; "USD 900" → USD
+  const priceCurrency = (v: string) => /^[A-Z]{3}/.exec(v)?.[0] ?? "USD";
 
   return {
     "@context": "https://schema.org",
@@ -36,6 +38,8 @@ export function buildJsonLd() {
         url: landingUrl,
         name: hero.h1,
         description: hero.lead,
+        datePublished: pageDates.published,
+        dateModified: pageDates.modified,
         inLanguage: "es",
         isPartOf: { "@type": "WebSite", "@id": `${siteConfig.url}/#website`, url: siteConfig.url, name: siteConfig.name },
         about: { "@id": `${landingUrl}#service` },
@@ -58,7 +62,7 @@ export function buildJsonLd() {
             itemOffered: { "@type": "Service", name: item.title, description: item.description },
             priceSpecification: {
               "@type": "PriceSpecification",
-              priceCurrency: "USD",
+              priceCurrency: priceCurrency([pricing.corporate, pricing.ecommerce, pricing.landing][i] ?? "USD"),
               minPrice: priceNumber([pricing.corporate, pricing.ecommerce, pricing.landing][i] ?? "0"),
             },
           })),

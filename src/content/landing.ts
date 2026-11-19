@@ -7,12 +7,40 @@
  * es autocontenida y responde la pregunta en la primera frase.
  */
 
-// TODO(botkor): confirmar precios de referencia antes de publicar.
+// Precios de referencia "desde". El código de moneda (3 letras al inicio) define priceCurrency en el JSON-LD.
+// TODO(botkor): confirmar en COP los precios corporativo y e-commerce.
 export const pricing = {
-  landing: "USD 450",
+  landing: "COP $970.000",
   corporate: "USD 900",
   ecommerce: "USD 1.800",
 } as const;
+
+/**
+ * Fechas de la página (E-E-A-T: las IA priorizan contenido con fecha). Se usan en el JSON-LD
+ * (datePublished/dateModified), en los metadatos article:* y en el pie ("Última actualización").
+ * Actualiza `modified` a mano cuando cambies contenido relevante; no la automatices con la fecha
+ * de build, o Google verá "actualizaciones" sin cambios reales.
+ */
+export const pageDates = {
+  published: "2026-11-18",
+  modified: "2026-11-18",
+} as const;
+
+export interface CaseItem {
+  title: string;
+  challenge: string;
+  solution: string;
+  metrics: readonly { value: string; label: string }[];
+  /** Enlace al proyecto publicado (señal verificable para buscadores e IA). */
+  url?: string;
+  /** Destacado a ancho completo. */
+  featured?: boolean;
+  /**
+   * true = datos de ejemplo pendientes de confirmar. Se muestran solo en desarrollo, con una
+   * etiqueta "Datos de ejemplo", y NO se publican en producción. Pásalo a false al poner los reales.
+   */
+  sample?: boolean;
+}
 
 export type IconName =
   | "building"
@@ -50,9 +78,9 @@ export interface FeatureItem {
 
 export const hero = {
   eyebrow: "Agencia de desarrollo web · SEO + GEO + Automatización",
-  h1: "Desarrollo web y automatización",
+  h1: "Diseño de páginas web profesionales en Bogotá",
   // Se renderiza con "botkor" en negrita (ver Hero.tsx). Texto plano para metadatos y JSON-LD.
-  lead: "Nuestro servicio de desarrollo web combina diseño adaptable, posicionamiento en Google, recomendación por IA y una estructura lista para cualquier automatización.",
+  lead: "botkor es una agencia de diseño y desarrollo web en Bogotá que crea páginas web corporativas, tiendas online y landing pages para empresas de toda Colombia. Entregamos en 1 a 3 semanas, desde COP $970.000, con carga en menos de 2 segundos, SEO técnico, optimización para buscadores con IA y automatizaciones que llevan cada contacto a WhatsApp o a tu CRM.",
   primaryCta: "Cotizar mi página web ahora",
   secondaryCta: "Ver portafolio de proyectos",
   proof: [
@@ -208,6 +236,33 @@ export const whyBotkor = {
   h2: "¿Por qué contratar a botkor para crear tu página web?",
   intro:
     "Contratar a botkor significa recibir una web medible desde el primer día: carga en menos de 2 segundos, diseño responsivo probado en dispositivos reales, SEO técnico y GEO integrados en el código, y un panel autogestionable para editar contenido sin depender de programadores. Tú controlas el sitio; nosotros garantizamos su rendimiento técnico.",
+  evidenceTitle: "Por qué la velocidad de tu web es dinero: datos verificables",
+  evidence: [
+    {
+      value: "+8,4 %",
+      text: "más conversiones en tiendas online al mejorar solo 0,1 s la velocidad de carga móvil.",
+      source: "Deloitte, Milliseconds Make Millions (2020)",
+      url: "https://www.deloitte.com/ie/en/services/consulting/research/milliseconds-make-millions.html",
+    },
+    {
+      value: "10 %",
+      text: "de usuarios adicionales perdió la BBC por cada segundo extra que tardaba su sitio en cargar.",
+      source: "Google web.dev, Why speed matters",
+      url: "https://web.dev/learn/performance/why-speed-matters",
+    },
+    {
+      value: "−43 %",
+      text: "de tasa de rebote logró The Economic Times al superar los umbrales de Core Web Vitals.",
+      source: "Google web.dev, caso The Economic Times",
+      url: "https://web.dev/case-studies/economic-times-cwv",
+    },
+    {
+      value: "≤ 2,5 s",
+      text: "es el tiempo de carga del contenido principal (LCP) que Google considera una buena experiencia.",
+      source: "Google web.dev, Largest Contentful Paint",
+      url: "https://web.dev/articles/lcp",
+    },
+  ],
   items: [
     {
       icon: "zap",
@@ -273,8 +328,24 @@ export const cases = {
   eyebrow: "Casos de éxito",
   h2: "Lo que nuestros clientes logran con una web desarrollada por botkor",
   intro:
-    "Medimos nuestros proyectos por resultados de negocio, no solo por diseño. Estos dos casos muestran lo que ocurre cuando estrategia comercial, velocidad de carga y automatización trabajan juntas desde el código: más solicitudes calificadas, procesos de venta sin intervención manual y plataformas estables bajo alta demanda.",
+    "Medimos nuestros proyectos por resultados de negocio, no solo por diseño. Estos casos muestran lo que ocurre cuando estrategia comercial, velocidad de carga y automatización trabajan juntas desde el código: más solicitudes calificadas, procesos de venta sin intervención manual y plataformas estables bajo alta demanda.",
   items: [
+    {
+      // TODO(botkor): reemplazar las métricas por las reales y cambiar sample a false para publicarlo.
+      title: "Caso de Éxito: Enfermeras Ángeles de Vida, enfermería a domicilio en Bogotá",
+      url: "https://www.enfermerasangelesdevida.com/",
+      featured: true,
+      sample: true,
+      challenge:
+        "Las familias que buscan enfermería a domicilio deciden rápido y casi siempre desde el celular: necesitan confianza inmediata, información clara de los servicios y un canal directo para pedir ayuda.",
+      solution:
+        "Sitio a medida con narrativa centrada en la familia, catálogo de seis servicios, proceso de atención explicado paso a paso, preguntas frecuentes y botón de WhatsApp en toda la página, optimizado para búsquedas locales en Bogotá.",
+      metrics: [
+        { value: "1,3 s", label: "tiempo de carga en móvil (LCP)" },
+        { value: "+65 %", label: "solicitudes de servicio por WhatsApp en 3 meses" },
+        { value: "Top 3", label: "en Google para “enfermeras a domicilio Bogotá”" },
+      ],
+    },
     {
       title: "Caso de Éxito: Consultora de Negocios B2B",
       challenge: "Su web anterior generaba pocas solicitudes y los contactos se perdían entre correos sin seguimiento.",
@@ -293,8 +364,8 @@ export const cases = {
         { value: "24/7", label: "ventas automáticas sin caídas" },
       ],
     },
-  ],
-} as const;
+  ] as CaseItem[],
+};
 
 export const faq = {
   id: "preguntas-frecuentes",

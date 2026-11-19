@@ -11,6 +11,7 @@ import { Innovation } from "@/components/sections/Innovation";
 import { Process } from "@/components/sections/Process";
 import { Sectors } from "@/components/sections/Sectors";
 import { JsonLdSchema } from "@/components/seo/JsonLdSchema";
+import { pageDates } from "@/content/landing";
 import { landingUrl, siteConfig } from "@/lib/site";
 
 const title = "Creación de Páginas Web Profesionales a Medida";
@@ -53,7 +54,10 @@ export const revalidate = 86400;
 export default function LandingPage() {
   return (
     <>
-      <JsonLdSchema />
+      {/* Fechas de publicación/actualización (frescura para buscadores e IA). React 19 las sube al <head>;
+          se declaran aquí porque metadata.other genera name= y Open Graph exige property= */}
+      <meta property="article:published_time" content={pageDates.published} />
+      <meta property="article:modified_time" content={pageDates.modified} />
       <Header />
       <main id="contenido">
         <Hero />
@@ -71,6 +75,9 @@ export default function LandingPage() {
       </main>
       <Footer />
       <WhatsAppFloat />
+      {/* JSON-LD al final: mismo contenido, pero así el texto del hero (respuesta directa) es lo
+          primero que leen los analizadores que recorren el HTML en orden */}
+      <JsonLdSchema />
     </>
   );
 }

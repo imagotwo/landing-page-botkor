@@ -20,14 +20,17 @@ const csp = [
   "form-action 'self'",
   "base-uri 'self'",
   "object-src 'none'",
-  "upgrade-insecure-requests",
+  // En desarrollo se omite: forzaría https al abrir el sitio por IP de red (http://192.168.x.x:3000)
+  isDev ? "" : "upgrade-insecure-requests",
 ]
+  .filter(Boolean)
   .join("; ")
   .replace(/\s{2,}/g, " ");
 
 const securityHeaders = [
   { key: "Content-Security-Policy", value: csp },
-  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+  // HSTS solo en producción: en desarrollo obligaría a https a los hosts de la red local
+  ...(isDev ? [] : [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" }]),
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
@@ -36,6 +39,13 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  /**
+   * Solo afecta a `next dev`: permite abrir el servidor de desarrollo desde cualquier IP o
+   * dominio de la red (móvil, otra PC, IP nueva tras reconectar el Wi-Fi) sin que Next.js
+   * bloquee sus recursos internos (/_next, HMR). "**.*" = cualquier host con al menos un punto
+   * (todas las IPv4 y dominios). Se ignora en producción.
+   */
+  allowedDevOrigins: ["**.*"],
   poweredByHeader: false,
   reactStrictMode: true,
   images: {

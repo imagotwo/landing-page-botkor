@@ -1,5 +1,5 @@
 import { WhatsAppIcon } from "@/components/analytics/WhatsAppIcon";
-import { hero } from "@/content/landing";
+import { hero, pageDates } from "@/content/landing";
 import { siteConfig, whatsappHref } from "@/lib/site";
 
 const SERVICE_LINKS = [
@@ -9,6 +9,11 @@ const SERVICE_LINKS = [
   { href: "#automatizacion", label: "Automatización e integraciones" },
   { href: "#seguridad", label: "Auditoría y seguridad web" },
 ];
+
+/** "2026-11-18" → "18 de noviembre de 2026" (sin depender de la zona horaria del servidor) */
+function formatDate(iso: string) {
+  return new Intl.DateTimeFormat("es-CO", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${iso}T00:00:00Z`));
+}
 
 /** Footer de la referencia: wordmark gigante, lema a la derecha, filas con divisores. */
 export function Footer() {
@@ -58,7 +63,10 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col gap-2 border-t border-line py-7 text-xs text-muted sm:flex-row sm:justify-between">
-          <p>© {year} {siteConfig.legalName}. Todos los derechos reservados.</p>
+          <p>
+            © {year} {siteConfig.legalName}. Todos los derechos reservados. · Última actualización:{" "}
+            <time dateTime={pageDates.modified}>{formatDate(pageDates.modified)}</time>
+          </p>
           <p>Rendimiento, accesibilidad y seguridad por diseño.</p>
         </div>
       </div>
